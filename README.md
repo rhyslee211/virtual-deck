@@ -1,6 +1,6 @@
 # VirtualDeck
 
-## What is Virtual Deck
+## What is Virtual Deck?
 
 Virtual Deck is a stream deck built into your computer. Instead of buying an entire new device, users can assign keybindings to macros that perform tasks such as:
 
