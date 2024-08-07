@@ -7,7 +7,7 @@ let server;
 
 function createWindow () {
 
-  server = fork(path.join(__dirname, '/src/server.js'))
+  server = fork(path.join(__dirname, '../src/server.js'))
 
   const win = new BrowserWindow({
     width: 800,
@@ -15,7 +15,7 @@ function createWindow () {
     minWidth: 600,
     minHeight: 400,
     webPreferences: {
-      preload: path.join(__dirname, '/src/preload.js'),
+      preload: path.join(__dirname, '../src/preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true
@@ -23,7 +23,9 @@ function createWindow () {
     frame: false
   })
 
-  win.loadFile('./src/index.html')
+  //startURL = 'http://localhost:3000';
+
+  win.loadFile(path.join(__dirname, "../build/index.html"));
 
   ipc.on('close', () => {
     win.close()

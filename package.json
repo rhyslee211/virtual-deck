@@ -1,12 +1,16 @@
 {
   "name": "virtual-deck",
   "version": "0.1.0",
+  "main": "public/main.js",
+  "homepage": "./",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^7.1.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "express": "^4.19.2",
+    "obs-websocket-js": "^5.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
@@ -14,9 +18,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dist": "electron-builder",
+    "main": "electron.js",
+    "build": "craco build",
+    "electron-start": "electron ."
   },
   "eslintConfig": {
     "extends": [
@@ -37,7 +42,12 @@
     ]
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "electron": "^31.3.1",
-    "tailwindcss": "^3.4.7"
+    "electron-builder": "^24.13.3",
+    "electron-is-dev": "^3.0.1",
+    "tailwindcss": "^3.4.7",
+    "wait-on": "^7.2.0",
+    "webpack-node-externals": "^3.0.0"
   }
 }
