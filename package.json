@@ -21,7 +21,8 @@
     "dist": "electron-builder",
     "main": "electron.js",
     "build": "craco build",
-    "electron-start": "electron ."
+    "electron-start": "electron .",
+    "dev-start": "concurrently \"craco build\" \"electron .\""
   },
   "eslintConfig": {
     "extends": [
