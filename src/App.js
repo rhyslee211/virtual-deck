@@ -1,6 +1,7 @@
 import React from 'react';
 import Sidebar from './components/Sidebar';
 import WindowsControls from './components/WindowsControls';
+import MacroButton from './components/MacroButton';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <h1 className="text-sm text-blue-500 font-bold underline">
             Hello world!!!!!!!!!!!!!
           </h1>
+          <MacroButton color="#22d3ee"/>
         </div>
       </div>
     </div>
