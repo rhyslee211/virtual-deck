@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 
 
-function AddMacroForm({closeForm}, {addMacro}) {
+function AddMacroForm({closeForm, addMacro}) {
 
     const [commandType, setCommandType] = useState("");
 
@@ -10,7 +10,13 @@ function AddMacroForm({closeForm}, {addMacro}) {
     }
 
     const handleFormSubmit = () => {
-        addMacro({command: commandType});
+        addMacro({
+            command: "http://localhost:3000/" + commandType, 
+            color: "#22d3ee", 
+            icon: "fas fa-microphone", 
+            keys: ["ctrl", "shift", "m"], 
+            position: {x: 100, y: 100}
+        });
         closeForm();
     }
 
@@ -25,12 +31,12 @@ function AddMacroForm({closeForm}, {addMacro}) {
                 <div className="text-white">Command Type <br />
                     <select onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800">
                         <option value=""></option>
-                        <option value="startStream">Start Stream</option>
-                        <option value="stopStream">Stop Stream</option>
-                        <option value="startRecording">Start Recording</option>
-                        <option value="stopRecording">Stop Recording</option>
-                        <option value="muteMic">Mute Mic</option>
-                        <option value="unmuteMic">Unmute Mic</option>
+                        <option value="start-stream">Start Stream</option>
+                        <option value="stop-stream">Stop Stream</option>
+                        <option value="start-recording">Start Recording</option>
+                        <option value="stop-recording">Stop Recording</option>
+                        <option value="mute-mic">Mute Mic</option>
+                        <option value="unmute-mic">Unmute Mic</option>
                     </select>
                 </div>
                 {commandType !== "" && <div className="text-white">{commandType}</div>}
