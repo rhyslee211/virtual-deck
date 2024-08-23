@@ -29,6 +29,16 @@ function MacroButton(props) {
         }
     }
 
+    const hoverColors = {
+        "#22d3ee": "#1bb7d1",
+        "#22ee9d": "#1bbb88",
+        "#eede22": "#c5c11c",
+        "#ee5e22": "#c54d1b",
+        "#d322ee": "#b01bc1",
+    };
+
+    const hoverColor = hoverColors[props.color];
+
     const handleMouseMove = (event) => {
         if (isDragging) {
 
@@ -49,8 +59,8 @@ function MacroButton(props) {
                 newY = macroArea.bottom - buttonRef.current.clientHeight;
             }
 
-            console.log('NewX and NewY',newX, newY);
-            console.log('macroArea Left and Top',macroArea.top, macroArea.left);
+            //console.log('NewX and NewY',newX, newY);
+            //console.log('macroArea Left and Top',macroArea.top, macroArea.left);
 
             // Update the position of the button
             props.updatePosition(props.index, newX, newY);
@@ -78,14 +88,17 @@ function MacroButton(props) {
 
     return (
         <button ref={buttonRef}
-        className="w-12 h-12 rounded-md"
+        className={`w-12 h-12 rounded-md text-sm text-white flex items-center justify-center`}
         onMouseDown={handleMouseDown}
-            style={{backgroundColor: props.color,
-                    position: "absolute",
+            style={{position: "absolute",
                     top: props.position.y,
-                    left: props.position.x
+                    left: props.position.x,
+                    backgroundColor: props.color,
+                    transition: "background-color 0.3s",
             }}
-        ></button>
+            onMouseEnter={() => buttonRef.current.style.backgroundColor = hoverColor}
+            onMouseLeave={() => buttonRef.current.style.backgroundColor = props.color}
+        >{props.icon}</button>
     );
 }
 
