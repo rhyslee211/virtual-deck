@@ -1,6 +1,5 @@
 import { React, useState } from "react";
 
-
 function AddMacroForm({closeForm, addMacro}) {
 
     const [commandType, setCommandType] = useState("");

@@ -11,11 +11,16 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
 
   const openForm = () => {
-    setIsFormVisible(true);
+    if(!isFormVisible) {
+      setIsEditing(false);
+      setIsFormVisible(true);
+    }
   }
 
   const closeForm = () => {
-    setIsFormVisible(false);
+    if(isFormVisible) {
+      setIsFormVisible(false);
+    }
   }
 
   const addMacro = (newMacro) => {
@@ -24,14 +29,16 @@ function App() {
   }
 
   const toggleEditor = () => {
-    setIsEditing(!isEditing);
+    if(!isFormVisible) {
+      setIsEditing(!isEditing);
+    }
   }
 
   return (
     <div className="flex flex-col h-screen bg-slate-700 overflow-hidden">
       <WindowsControls />
       <div className="flex flex-row flex-grow">
-        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} />
+        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible}/>
         <div className="flex-grow">
           {!isFormVisible && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros}></MacroArea>}
           {isFormVisible && <AddMacroForm closeForm={closeForm} addMacro={addMacro}></AddMacroForm>}

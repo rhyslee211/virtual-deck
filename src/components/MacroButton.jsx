@@ -88,7 +88,7 @@ function MacroButton(props) {
 
     return (
         <button ref={buttonRef}
-        className={`w-12 h-12 rounded-md text-sm text-white flex items-center justify-center`}
+        className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold`}
         onMouseDown={handleMouseDown}
             style={{position: "absolute",
                     top: props.position.y,
