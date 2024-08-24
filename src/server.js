@@ -7,8 +7,9 @@ const path = require('path');
 
 const app = express();
 const port = 3000;
-//const server = getLocalIpAddress();
-const server = "localhost";
+const server = getLocalIpAddress();
+//const server = "localhost";
+//const server = "0.0.0.0"
 
 const obs = new OBSWebSocket();
 const OBS_WEBSOCKET_ADDRESS = 'ws://localhost:4455';
