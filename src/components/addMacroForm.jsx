@@ -49,7 +49,7 @@ function AddMacroForm({closeForm, addMacro}) {
 
     return (
         <div className="w-full h-full bg-slate-700 flex justify-center">
-            <div className="h-full w-1/2 flex flex-col items-center justify-between">
+            <div className="h-full w-96 flex flex-col items-center justify-between">
                 <div className="text-white mt-4 w-full">Command Type <br />
                     <select onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800">
                         <option value=""></option>
@@ -74,8 +74,8 @@ function AddMacroForm({closeForm, addMacro}) {
                         {commandType === "switch-scene" && <div className="text-white">Scene Name<br />
                             <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setSceneName(event.target.value)} type="text" />
                         </div>}
-                        <div className="text-white">Button Color<br />
-                            <div className="flex flex-row justify-around">
+                        <div className="text-white">Background Color<br />
+                            <div className="pt-6 flex flex-row justify-around">
                                 <button onClick={(event)=>setButtonColor("#22d3ee")} 
                                 className={`w-12 h-12 rounded-md bg-[#22d3ee] ${buttonColor === "#22d3ee" ? "border-2 border-white" : "" }`}
                                 ></button>
@@ -95,9 +95,9 @@ function AddMacroForm({closeForm, addMacro}) {
                         </div>
                     </div>}
                 </div>
-                <div className="flex flex-row text-white justify-around w-full lg:w-2/3">
-                    <button onClick={handleFormSubmit} className="w-48 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">Save</button>
-                    <button onClick={handleFormCancel} className="w-48 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">Cancel</button>
+                <div className="flex flex-row text-white justify-between w-full">
+                    <button onClick={handleFormSubmit} className="w-36 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">Save</button>
+                    <button onClick={handleFormCancel} className="w-36 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">Cancel</button>
                 </div>
             </div>
         </div>

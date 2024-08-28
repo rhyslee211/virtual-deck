@@ -107,33 +107,49 @@ app.get('/stop-recording', async (req, res) => {
 
 app.get('/check-connection', async (req, res) => {
   try {
-    await obs.send('GetVersion');
+    await obs.call('GetVersion');
     res.status(200).send('Connected to OBS WebSocket');
   } catch (error) {
     res.status(500).send('Failed to connect to OBS WebSocket');
+    console.log(error);
   }
 });
 
-obs.connect(OBS_WEBSOCKET_ADDRESS, OBS_WEBSOCKET_PASSWORD)
-  .then(() => {
-    console.log('Connected to OBS WebSocket');
-  })
-  .catch(err => {
-    console.error('Failed to connect to OBS WebSocket:', err);
-  });
+app.get('/connect-to-obs', async (req, res) => {
+  try {
+    await obs.connect(OBS_WEBSOCKET_ADDRESS, OBS_WEBSOCKET_PASSWORD);
+    res.status(200).send('Connected to OBS WebSocket');
+  } catch (error) {
+    res.status(500).send('Failed to connect to OBS WebSocket');
+    console.log(error);
+  }
+});
 
-  obs.on('ConnectionOpened', () => {
-    console.log('Connection Opened');
-  });
-  
-  obs.on('Identified', () => {
-    console.log('Identified, good to go!')
-  
-    // Send some requests.
-    obs.call('GetSceneList').then((data) => {
-      console.log('Scenes:', data);
+function connectToOBS() {
+
+  obs.connect(OBS_WEBSOCKET_ADDRESS, OBS_WEBSOCKET_PASSWORD)
+    .then(() => {
+      console.log('Connected to OBS WebSocket');
+    })
+    .catch(err => {
+      console.error('Failed to connect to OBS WebSocket:', err);
     });
+}
+
+obs.on('ConnectionOpened', () => {
+  console.log('Connection Opened');
+});
+
+obs.on('Identified', () => {
+  console.log('Identified, good to go!')
+
+  // Send some requests.
+  obs.call('GetSceneList').then((data) => {
+    console.log('Scenes:', data);
   });
+});
+
+connectToOBS();
 
 obs.on('SwitchScenes', data => {
   console.log('SwitchScenes', data);

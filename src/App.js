@@ -1,14 +1,38 @@
-import { React, useState} from 'react';
+import { React, useEffect, useState} from 'react';
 import Sidebar from './components/Sidebar';
 import WindowsControls from './components/WindowsControls';
 import MacroArea from './components/macroArea';
 import AddMacroForm from './components/addMacroForm';
+//import { ToastContainer, toast } from 'react-toastify';
 
 function App() {
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [macros, setMacros] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [obsConnected, setObsConnected] = useState(false);
+
+  const checkConnection = async () => {
+    const response = await fetch('http://localhost:3000/check-connection');
+    if(response.status === 200) {
+      setObsConnected(true);
+    }
+    else {
+      setObsConnected(false);
+      //toast.error('No OBS connection');
+    }
+  }
+
+  const connectToOBS = async () => {
+    const response = await fetch('http://localhost:3000/connect-to-obs');
+    if(response.status === 200) {
+      setObsConnected(true);
+    }
+    else {
+      setObsConnected(false);
+      //toast.error('Failed to connect to OBS');
+    }
+  }
 
   const openForm = () => {
     if(!isFormVisible) {
@@ -38,13 +62,17 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    checkConnection();
+  }, []);
+
   return (
     <div className="flex flex-col h-screen bg-slate-700 overflow-hidden">
       <WindowsControls />
       <div className="flex flex-row flex-grow">
-        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible}/>
+        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible} connectToOBS={connectToOBS} obsConnected={obsConnected} />
         <div className="flex-grow">
-          {!isFormVisible && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro}></MacroArea>}
+          {!isFormVisible && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection}></MacroArea>}
           {isFormVisible && <AddMacroForm closeForm={closeForm} addMacro={addMacro}></AddMacroForm>}
         </div>
       </div>
