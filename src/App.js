@@ -28,6 +28,10 @@ function App() {
     console.log(macros);
   }
 
+  const deleteMacro = (index) => {
+    setMacros(macros.filter((_, i) => i !== index)); // Remove macro from the list
+  }
+
   const toggleEditor = () => {
     if(!isFormVisible) {
       setIsEditing(!isEditing);
@@ -40,7 +44,7 @@ function App() {
       <div className="flex flex-row flex-grow">
         <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible}/>
         <div className="flex-grow">
-          {!isFormVisible && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros}></MacroArea>}
+          {!isFormVisible && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro}></MacroArea>}
           {isFormVisible && <AddMacroForm closeForm={closeForm} addMacro={addMacro}></AddMacroForm>}
         </div>
       </div>
