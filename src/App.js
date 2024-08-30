@@ -3,7 +3,7 @@ import Sidebar from './components/Sidebar';
 import WindowsControls from './components/WindowsControls';
 import MacroArea from './components/macroArea';
 import AddMacroForm from './components/addMacroForm';
-//import { ToastContainer, toast } from 'react-toastify';
+import { Toaster, toast } from 'react-hot-toast';
 
 function App() {
 
@@ -21,6 +21,10 @@ function App() {
       setObsConnected(false);
       //toast.error('No OBS connection');
     }
+  }
+
+  const saveMacros = () => {
+    localStorage.setItem('macros', JSON.stringify(macros));
   }
 
   const connectToOBS = async () => {
@@ -64,11 +68,13 @@ function App() {
 
   useEffect(() => {
     checkConnection();
+    //toast.success('This is a success message!');
   }, []);
 
   return (
     <div className="flex flex-col h-screen bg-slate-700 overflow-hidden">
       <WindowsControls />
+      <Toaster />
       <div className="flex flex-row flex-grow">
         <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible} connectToOBS={connectToOBS} obsConnected={obsConnected} />
         <div className="flex-grow">
