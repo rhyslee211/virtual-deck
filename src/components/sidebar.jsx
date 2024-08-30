@@ -13,7 +13,7 @@ function Sidebar({onFormButtonClick, onEditButtonClick, isEditing, isFormVisible
                     <button className={`w-12 h-12 mb-4 bg-indigo-400 rounded-full flex items-center justify-center ${isInSettings ? 'border-2 border-white' : ''}`} onClick={onSettingsButtonClick}><IoMdSettings size={24} /></button>
                 </div>
                 <div className="flex flex-col items-center">
-                    <button className={`w-12 h-12 mb-4 bg-indigo-400 rounded-full flex items-center justify-center ${obsConnected ? 'border-4 border-green-500' : 'border-4 border-orange-400'}`} onClick={connectToOBS}><SiObsstudio size={24} /></button>
+                    <button className={`w-12 h-12 mb-4 bg-indigo-400 rounded-full flex items-center justify-center ${obsConnected ? 'border-4 border-green-500 outline outline-1 outline-black' : 'border-4 border-orange-400 outline outline-1 outline-black'}`} onClick={connectToOBS}><SiObsstudio size={24} /></button>
                 </div>
             </div>
         </div>

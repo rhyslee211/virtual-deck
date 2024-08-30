@@ -110,7 +110,7 @@ app.get('/check-connection', async (req, res) => {
     await obs.call('GetVersion');
     res.status(200).send('Connected to OBS WebSocket');
   } catch (error) {
-    res.status(500).send('Failed to connect to OBS WebSocket');
+    res.status(500).send('OBS WebSocket not connected');
     console.log(error);
   }
 });
@@ -146,6 +146,9 @@ obs.on('Identified', () => {
   // Send some requests.
   obs.call('GetSceneList').then((data) => {
     console.log('Scenes:', data);
+  });
+  obs.call('GetInputList').then((data) => {
+    console.log('Inputs:', data);
   });
 });
 
