@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require('electron/main')
 const path = require('node:path')
 const ipc = require('electron').ipcMain
 const { fork } = require('child_process')
+const fs = require('fs')
 
 let server;
 
@@ -63,6 +64,41 @@ ipc.on('request-server-info', (event) => {
 
 app.whenReady().then(() => {
   createWindow()
+
+  const userDataPath = app.getPath('userData');
+
+  console.log(userDataPath);
+
+  ipc.handle('save-macros', async (event,macros) => {
+    // Save macros
+
+    const filePath = path.join(userDataPath, 'macros.json');
+    const jsonData = JSON.stringify(macros);
+
+    try {
+      fs.writeFileSync(filePath, jsonData);
+      return 'Data successfully saved!';
+    } catch (error) {
+      console.error('Error writing file:', error);
+      console.error(filePath);
+      console.log(jsonData);
+      throw error;
+    }
+
+  });
+
+  ipc.handle('load-macros', async () => {
+    const filePath = path.join(userDataPath, 'macros.json');
+
+    try {
+      const data = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('Error reading file:', error);
+      console.error(filePath)
+      throw error;
+    }
+  });
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

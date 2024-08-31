@@ -2,7 +2,8 @@ const ipc = require('electron').ipcRenderer;
 
 document.onreadystatechange = (event) => {
     if (document.readyState == "complete") {
-        handleWindowControls();
+        //handleWindowControls();
+        //handleSaveFunctions();
     }
 };
 
@@ -19,6 +20,11 @@ window.onbeforeunload = (event) => {
     Electron win listeners as the win is not dereferenced unless closed) */
     win.removeAllListeners();
 }
+
+function handleSaveFunctions() {
+
+}
+
 
 function handleWindowControls() {
     // Make minimise/maximise/restore/close buttons work when they are clicked

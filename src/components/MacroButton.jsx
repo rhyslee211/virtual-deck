@@ -26,10 +26,10 @@ function MacroButton(props) {
             console.log(props.command);
             const response = await fetch(props.command);
 
+            props.checkConnection();
             console.log(response);
         }
 
-        props.checkConnection();
     }
 
     const hoverColors = {

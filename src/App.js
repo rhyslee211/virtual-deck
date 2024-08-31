@@ -4,6 +4,7 @@ import WindowsControls from './components/WindowsControls';
 import MacroArea from './components/macroArea';
 import AddMacroForm from './components/addMacroForm';
 import { Toaster, toast } from 'react-hot-toast';
+import { ipcRenderer } from "electron";
 
 function App() {
 
@@ -11,30 +12,52 @@ function App() {
   const [macros, setMacros] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [obsConnected, setObsConnected] = useState(false);
+  const [hasRun, setHasRun] = useState(false);
+  const [firstRun, setFirstRun] = useState(true);
 
   const checkConnection = async () => {
     const response = await fetch('http://localhost:3000/check-connection');
     if(response.status === 200) {
       setObsConnected(true);
+      if(firstRun){
+        toastSuccessMessage('Connected to OBS');
+        setFirstRun(false);
+      }
     }
     else {
       setObsConnected(false);
-      //toast.error('No OBS connection');
+      toastErrorMessage('No OBS connection');
     }
   }
 
-  const saveMacros = () => {
-    localStorage.setItem('macros', JSON.stringify(macros));
+  async function saveMacros(macros) {
+    try {
+      const response = await ipcRenderer.invoke('save-macros', macros);
+      //console.log(response);
+    } catch (error) {
+      console.error('Failed to save macros:', error);
+    }
+  }
+  
+  async function loadMacros() {
+    try {
+      const macros = await ipcRenderer.invoke('load-macros');
+      //console.log(macros);
+      setMacros(macros);
+    } catch (error) {
+      console.error('Failed to load macros:', error);
+    }
   }
 
   const connectToOBS = async () => {
     const response = await fetch('http://localhost:3000/connect-to-obs');
     if(response.status === 200) {
       setObsConnected(true);
+      toastSuccessMessage('Connected to OBS');
     }
     else {
       setObsConnected(false);
-      //toast.error('Failed to connect to OBS');
+      toastErrorMessage('Failed to connect to OBS');
     }
   }
 
@@ -53,6 +76,7 @@ function App() {
 
   const addMacro = (newMacro) => {
     setMacros([...macros, newMacro]); // Add new macro to the list
+    saveMacros(macros);
     console.log(macros);
   }
 
@@ -64,17 +88,30 @@ function App() {
     if(!isFormVisible) {
       setIsEditing(!isEditing);
     }
+    saveMacros(macros);
   }
 
   useEffect(() => {
-    checkConnection();
-    //toast.success('This is a success message!');
-  }, []);
+    if (!hasRun) {
+      checkConnection();
+      // toast.success('This is a success message!');
+      loadMacros();
+      setHasRun(true);
+    }
+  }, [hasRun]);
+
+  const toastErrorMessage = (message) => {
+    toast.error(message);
+  }
+
+  const toastSuccessMessage = (message) => {
+    toast.success(message);
+  }
 
   return (
     <div className="flex flex-col h-screen bg-slate-700 overflow-hidden">
       <WindowsControls />
-      <Toaster />
+      <Toaster toastOptions={{ className: '',style:{ background: '#000329', color: '#FFFFFF'}}} />
       <div className="flex flex-row flex-grow">
         <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible} connectToOBS={connectToOBS} obsConnected={obsConnected} />
         <div className="flex-grow">
