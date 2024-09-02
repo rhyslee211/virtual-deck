@@ -84,6 +84,12 @@ function App() {
     setMacros(macros.filter((_, i) => i !== index)); // Remove macro from the list
   }
 
+  const editMacro = (index, updatedMacro) => {
+    const updatedMacros = [...macros];
+    updatedMacros[index] = updatedMacro;
+    setMacros(updatedMacros);
+  }
+
   const toggleEditor = () => {
     if(!isFormVisible) {
       setIsEditing(!isEditing);
@@ -116,7 +122,7 @@ function App() {
         <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible} connectToOBS={connectToOBS} obsConnected={obsConnected} />
         <div className="flex-grow">
           {!isFormVisible && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection}></MacroArea>}
-          {isFormVisible && <AddMacroForm closeForm={closeForm} addMacro={addMacro}></AddMacroForm>}
+          {isFormVisible && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
         </div>
       </div>
     </div>

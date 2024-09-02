@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 
-function AddMacroForm({closeForm, addMacro}) {
+function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
 
     const [commandType, setCommandType] = useState("");
     const [commandText, setCommandText] = useState("");
@@ -29,6 +29,12 @@ function AddMacroForm({closeForm, addMacro}) {
     const handleFormSubmit = () => {
 
         if (commandType === "") {
+            toastErrorMessage("Please select a command type");
+            return;
+        }
+
+        if (commandText === "") {
+            toastErrorMessage("Please give this command a name");
             return;
         }
 
