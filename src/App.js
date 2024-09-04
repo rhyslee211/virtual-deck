@@ -5,15 +5,20 @@ import MacroArea from './components/macroArea';
 import AddMacroForm from './components/addMacroForm';
 import { Toaster, toast } from 'react-hot-toast';
 import { ipcRenderer } from "electron";
+import SettingsForm from './components/settingsForm';
 
 function App() {
 
+  const [formState, setFormState] = useState("macroArea");
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [macros, setMacros] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [obsConnected, setObsConnected] = useState(false);
   const [hasRun, setHasRun] = useState(false);
   const [firstRun, setFirstRun] = useState(true);
+  const [obsPort, setObsPort] = useState("");
+  const [obsPassword, setObsPassword] = useState("");
+  const [twitchApiKey, setTwitchApiKey] = useState("");
 
   const checkConnection = async () => {
     const response = await fetch('http://localhost:3000/check-connection');
@@ -62,15 +67,17 @@ function App() {
   }
 
   const openForm = () => {
-    if(!isFormVisible) {
+    if(formState !== "addMacroForm") {
       setIsEditing(false);
       setIsFormVisible(true);
+      setFormState("addMacroForm");
     }
   }
 
   const closeForm = () => {
-    if(isFormVisible) {
+    if(formState !== "macroArea") {
       setIsFormVisible(false);
+      setFormState("macroArea");
     }
   }
 
@@ -97,6 +104,15 @@ function App() {
     saveMacros(macros);
   }
 
+  const onSettingsButtonClick = () => {
+    if(formState !== "settingsForm") {
+      setFormState("settingsForm");
+    }
+    else {
+      setFormState("macroArea");
+    }
+  }
+
   useEffect(() => {
     if (!hasRun) {
       checkConnection();
@@ -119,10 +135,11 @@ function App() {
       <WindowsControls />
       <Toaster toastOptions={{ className: '',style:{ background: '#000329', color: '#FFFFFF'}}} />
       <div className="flex flex-row flex-grow">
-        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible} connectToOBS={connectToOBS} obsConnected={obsConnected} />
+        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} obsConnected={obsConnected} />
         <div className="flex-grow">
-          {!isFormVisible && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection}></MacroArea>}
-          {isFormVisible && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
+          {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection}></MacroArea>}
+          {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
+          {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} setTwitchApiKey={setTwitchApiKey} obsPort={obsPort} obsPassword={obsPassword} twitchApiKey={twitchApiKey}></SettingsForm>}
         </div>
       </div>
     </div>
