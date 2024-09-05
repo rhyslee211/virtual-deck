@@ -10,7 +10,7 @@ import SettingsForm from './components/settingsForm';
 function App() {
 
   const [formState, setFormState] = useState("macroArea");
-  const [isFormVisible, setIsFormVisible] = useState(false);
+  //const [isFormVisible, setIsFormVisible] = useState(false);
   const [macros, setMacros] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [obsConnected, setObsConnected] = useState(false);
@@ -69,14 +69,14 @@ function App() {
   const openForm = () => {
     if(formState !== "addMacroForm") {
       setIsEditing(false);
-      setIsFormVisible(true);
+      //setIsFormVisible(true);
       setFormState("addMacroForm");
     }
   }
 
   const closeForm = () => {
     if(formState !== "macroArea") {
-      setIsFormVisible(false);
+      //setIsFormVisible(false);
       setFormState("macroArea");
     }
   }
@@ -98,7 +98,7 @@ function App() {
   }
 
   const toggleEditor = () => {
-    if(!isFormVisible) {
+    if(formState === "macroArea") {
       setIsEditing(!isEditing);
     }
     saveMacros(macros);
@@ -135,7 +135,7 @@ function App() {
       <WindowsControls />
       <Toaster toastOptions={{ className: '',style:{ background: '#000329', color: '#FFFFFF'}}} />
       <div className="flex flex-row flex-grow">
-        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} isFormVisible={isFormVisible} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} obsConnected={obsConnected} />
+        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} obsConnected={obsConnected} />
         <div className="flex-grow">
           {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection}></MacroArea>}
           {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
