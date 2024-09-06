@@ -35,7 +35,7 @@ function App() {
     }
   }
 
-  async function saveMacros(macros) {
+  async function saveMacros() {
     try {
       const response = await ipcRenderer.invoke('save-macros', macros);
       //console.log(response);
@@ -54,8 +54,33 @@ function App() {
     }
   }
 
+  async function saveSettings() {
+    try {
+      const response = await ipcRenderer.invoke('save-settings', {obsPort, obsPassword, twitchApiKey});
+      //console.log(response);
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+    }
+  }
+
+  async function loadSettings() {
+    try {
+      const settings = await ipcRenderer.invoke('load-settings');
+      setObsPort(settings.obsPort);
+      setObsPassword(settings.obsPassword);
+      setTwitchApiKey(settings.twitchApiKey);
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    }
+  }
+
   const connectToOBS = async () => {
-    const response = await fetch('http://localhost:3000/connect-to-obs');
+    const response = await fetch(`http://localhost:3000/connect-to-obs?port=${obsPort}&password=${obsPassword}`,
+      {
+        method: 'GET'
+      }
+
+    );
     if(response.status === 200) {
       setObsConnected(true);
       toastSuccessMessage('Connected to OBS');
@@ -115,12 +140,19 @@ function App() {
 
   useEffect(() => {
     if (!hasRun) {
-      checkConnection();
+      //checkConnection();
       // toast.success('This is a success message!');
       loadMacros();
+      loadSettings();
       setHasRun(true);
     }
   }, [hasRun]);
+
+  useEffect(() => {
+    if (obsPort !== "" && obsPassword !== "") {
+      connectToOBS();
+    }
+  }, [obsPort, obsPassword]);
 
   const toastErrorMessage = (message) => {
     toast.error(message);
@@ -139,7 +171,7 @@ function App() {
         <div className="flex-grow">
           {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection}></MacroArea>}
           {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
-          {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} setTwitchApiKey={setTwitchApiKey} obsPort={obsPort} obsPassword={obsPassword} twitchApiKey={twitchApiKey}></SettingsForm>}
+          {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} setTwitchApiKey={setTwitchApiKey} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchApiKey={twitchApiKey}></SettingsForm>}
         </div>
       </div>
     </div>

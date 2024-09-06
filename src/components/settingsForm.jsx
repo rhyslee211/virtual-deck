@@ -1,17 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-function SettingsForm({closeForm, setObsPort, setObsPassword, setTwitchApiKey, obsPort, obsPassword, twitchApiKey}) {
+function SettingsForm({closeForm, setObsPort, setObsPassword, setTwitchApiKey, saveSettings , obsPort, obsPassword, twitchApiKey}) {
 
     const [tempObsPort, setTempObsPort] = React.useState('');
     const [tempObsPassword, setTempObsPassword] = React.useState('');
     const [tempTwitchApiKey, setTempTwitchApiKey] = React.useState('');
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
     const handleFormSubmit = () => {
         setObsPort(tempObsPort);
         setObsPassword(tempObsPassword);
         setTwitchApiKey(tempTwitchApiKey);
         console.log(tempObsPort, tempObsPassword, tempTwitchApiKey);
-        closeForm();
+        //saveSettings();
+        //closeForm();
+        setIsFormSubmitted(true);
     }
 
     const handleFormCancel = () => {
@@ -24,6 +27,13 @@ function SettingsForm({closeForm, setObsPort, setObsPassword, setTwitchApiKey, o
         setTempTwitchApiKey(twitchApiKey);
     }, [obsPort, obsPassword, twitchApiKey]);
 
+    useEffect(() => {
+        if (isFormSubmitted) {
+            saveSettings();
+            closeForm();
+        }
+    }, [isFormSubmitted, tempObsPort, tempObsPassword, tempTwitchApiKey, saveSettings, closeForm]);
+
     return (
         <div className='w-full h-full bg-slate-700 flex justify-center pt-6'>
             <div className='w-96 h-full items-center bg-slate-700 flex flex-col justify-around'>
@@ -32,7 +42,7 @@ function SettingsForm({closeForm, setObsPort, setObsPassword, setTwitchApiKey, o
                         <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setTempObsPort(event.target.value)} type="text" value={tempObsPort} />
                     </div>
                     <div className="text-white">OBS Websocket Password<br />
-                        <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setTempObsPassword(event.target.value)} type="text" value={tempObsPassword} />
+                        <input type="password" className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setTempObsPassword(event.target.value)} value={tempObsPassword} />
                     </div>
                     <div className="text-white">Twitch API Key<br />
                         <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setTempTwitchApiKey(event.target.value)} type="text" value={tempTwitchApiKey} />

@@ -100,6 +100,34 @@ app.whenReady().then(() => {
     }
   });
 
+  ipc.handle('save-settings', async (event, settings) => {
+    const filePath = path.join(userDataPath, 'settings.json');
+    const jsonData = JSON.stringify(settings);
+
+    try {
+      fs.writeFileSync(filePath, jsonData);
+      return 'Settings successfully saved!';
+    } catch (error) {
+      console.error('Error writing file:', error);
+      console.error(filePath);
+      console.log(jsonData);
+      throw error;
+    }
+  });
+
+  ipc.handle('load-settings', async () => {
+    const filePath = path.join(userDataPath, 'settings.json');
+
+    try {
+      const data = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('Error reading file:', error);
+      console.error(filePath)
+      throw error;
+    }
+  });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()

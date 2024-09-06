@@ -12,8 +12,10 @@ const port = 3000;
 const server = "0.0.0.0"
 
 const obs = new OBSWebSocket();
-const OBS_WEBSOCKET_ADDRESS = 'ws://localhost:4455';
-const OBS_WEBSOCKET_PASSWORD = 'your_password';
+//let OBS_WEBSOCKET_ADDRESS = 'ws://localhost:4455';
+//let OBS_WEBSOCKET_PASSWORD = 'your_password';
+let OBS_WEBSOCKET_ADDRESS = '';
+let OBS_WEBSOCKET_PASSWORD = '';
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -116,6 +118,9 @@ app.get('/check-connection', async (req, res) => {
 });
 
 app.get('/connect-to-obs', async (req, res) => {
+  OBS_WEBSOCKET_ADDRESS = 'ws://localhost:' + req.query.port;
+  OBS_WEBSOCKET_PASSWORD = req.query.password;
+
   try {
     await obs.connect(OBS_WEBSOCKET_ADDRESS, OBS_WEBSOCKET_PASSWORD);
     res.status(200).send('Connected to OBS WebSocket');
