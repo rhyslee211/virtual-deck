@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect , useCallback } from "react";
 
 function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
 
@@ -8,6 +8,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
     const [microphoneName, setMicrophoneName] = useState("");
     const [sceneName, setSceneName] = useState("");
     const [buttonColor, setButtonColor] = useState("#22d3ee");
+    const [isRecording, setIsRecording] = useState(false);
 
     const handleSelectChange = (e) => {
         setCommandType(e.target.value);
@@ -48,10 +49,61 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
         closeForm();
     }
 
+    const handleRecordClick = () => {
+        if(!isRecording) {
+            setCommandKeybind("");
+        }
+        setIsRecording(!isRecording);
+    }
+
     const handleFormCancel = () => {
         console.log("Form Cancelled");
         closeForm();
     }
+
+    const handleKeyDown = useCallback((event) => {
+        event.preventDefault();
+        let key = event.key;
+
+        if (key === " ") {
+            key = "Space";
+        }
+
+        if (key === "Escape") {
+            key = "Esc";
+        }
+
+        if (key === "Control") {
+            key = "Ctrl";
+        }
+
+        if (event.code.startsWith('Numpad')) {
+            key = 'num' + key;
+        }
+
+        setCommandKeybind(prevKeybind => {
+            if (prevKeybind === "") {
+                return key;
+            } else {
+                if (!prevKeybind.includes(key)) {
+                    return prevKeybind + '+' + key;
+                }
+                return prevKeybind;
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        if (isRecording) {
+            window.addEventListener('keydown', handleKeyDown);
+        } else {
+            window.removeEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isRecording, handleKeyDown]);
 
     return (
         <div className="w-full h-full bg-slate-700 flex justify-center">
@@ -69,16 +121,19 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                     {commandType !== "" &&           
                     <div>
                         <div className="text-white">Command Text<br />
-                            <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCommandText(event.target.value)} type="text" />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCommandText(event.target.value)} type="text" />
                         </div>
                         <div className="text-white">Command Keybind<br />
-                            <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCommandKeybind(event.target.value)} type="text" />
+                            <div className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800 flex flex-row justify-around items-center">
+                                <input className="w-40 h-8 bg-slate-800" value={commandKeybind} type="text" readOnly />
+                                <button className="w-16 h-6 bg-slate-700 text-sm text-white" onClick={handleRecordClick}>Record</button>
+                            </div>
                         </div>
                         {(commandType === "mute-mic" || commandType === "unmute-mic") && <div className="text-white">Microphone Name<br />
-                            <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "switch-scene" && <div className="text-white">Scene Name<br />
-                            <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setSceneName(event.target.value)} type="text" />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setSceneName(event.target.value)} type="text" />
                         </div>}
                         <div className="text-white">Background Color<br />
                             <div className="pt-6 flex flex-row justify-around">
