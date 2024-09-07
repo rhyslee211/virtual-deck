@@ -1,16 +1,17 @@
-const { app, BrowserWindow } = require('electron/main')
+const { app, BrowserWindow , globalShortcut } = require('electron/main')
 const path = require('node:path')
 const ipc = require('electron').ipcMain
 const { fork } = require('child_process')
 const fs = require('fs')
 
 let server;
+let win;
 
 function createWindow () {
 
   server = fork(path.join(__dirname, '../src/server.js'))
 
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     minWidth: 600,
@@ -68,6 +69,17 @@ app.whenReady().then(() => {
   const userDataPath = app.getPath('userData');
 
   console.log(userDataPath);
+
+  ipc.handle('register-shortcuts', async (event, macros) => {
+
+    globalShortcut.unregisterAll();
+
+    macros.forEach(macro => {
+      globalShortcut.register(macro.keys, () => {
+        win.webContents.send('shortcut-pressed', macro.command);
+      });
+    });
+  });
 
   ipc.handle('save-macros', async (event,macros) => {
     // Save macros
@@ -139,5 +151,6 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
     server.kill();
+    globalShortcut.unregisterAll();
   }
 })

@@ -81,6 +81,10 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
             key = 'num' + key;
         }
 
+        if (event.code.startsWith('Key')) {
+            key = key.toUpperCase();
+        }
+
         setCommandKeybind(prevKeybind => {
             if (prevKeybind === "") {
                 return key;

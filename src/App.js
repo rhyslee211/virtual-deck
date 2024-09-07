@@ -35,9 +35,29 @@ function App() {
     }
   }
 
+  const runMacroShortcutCommand = async (command) => {
+    const response = await fetch(command);
+
+    console.log(response);
+
+    checkConnection();
+  }
+
+  const registerShortcuts = async () => {
+    try {
+      // Call the 'register-shortcuts' in main.js and pass the macros dictionary
+      await ipcRenderer.invoke('register-shortcuts', macros);
+      console.log('Shortcuts registered successfully!');
+    } catch (error) {
+      console.error('Failed to register shortcuts:', error);
+    }
+  };
+
   async function saveMacros() {
     try {
       const response = await ipcRenderer.invoke('save-macros', macros);
+
+      registerShortcuts();
       //console.log(response);
     } catch (error) {
       console.error('Failed to save macros:', error);
@@ -47,6 +67,7 @@ function App() {
   async function loadMacros() {
     try {
       const macros = await ipcRenderer.invoke('load-macros');
+      registerShortcuts();
       //console.log(macros);
       setMacros(macros);
     } catch (error) {
@@ -161,6 +182,18 @@ function App() {
   const toastSuccessMessage = (message) => {
     toast.success(message);
   }
+
+  useEffect(() => {
+    // Listen for the IPC message from main process with a parameter
+    ipcRenderer.on('shortcut-pressed', (event, parameter) => {
+      runMacroShortcutCommand(parameter); // Call the function with the parameter
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      ipcRenderer.removeAllListeners('shortcut-pressed');
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-slate-700 overflow-hidden">
