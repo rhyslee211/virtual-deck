@@ -107,6 +107,17 @@ app.get('/stop-recording', async (req, res) => {
   }
 });
 
+app.get('/switch-scene', async (req, res) => {
+  try {
+    const sceneName = req.query.sceneName;
+    await obs.call('SetCurrentProgramScene', { 'sceneName': sceneName });
+    res.status(200).send('Scene switched');
+  } catch (error) {
+    res.status(500).send('Failed to switch scene');
+    console.log(error);
+  }
+});
+
 app.get('/check-connection', async (req, res) => {
   try {
     await obs.call('GetVersion');

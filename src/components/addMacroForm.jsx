@@ -119,6 +119,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                         <option value="stop-stream">Stop Stream</option>
                         <option value="start-recording">Start Recording</option>
                         <option value="stop-recording">Stop Recording</option>
+                        <option value="switch-scene">Switch Scene</option>
                         <option value="mute-mic">Mute Mic</option>
                         <option value="unmute-mic">Unmute Mic</option>
                     </select>
@@ -130,7 +131,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                         <div className="text-white">Command Keybind<br />
                             <div className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800 flex flex-row justify-around items-center">
                                 <input className="w-40 h-8 bg-slate-800" value={commandKeybind} type="text" readOnly />
-                                <button className="w-16 h-6 bg-slate-700 text-sm text-white" onClick={handleRecordClick}>Record</button>
+                                <button className={`w-16 h-6 bg-slate-700 text-sm text-white ${isRecording ? 'border-2 border-red-600' : ''}`} onClick={handleRecordClick}>Record</button>
                             </div>
                         </div>
                         {(commandType === "mute-mic" || commandType === "unmute-mic") && <div className="text-white">Microphone Name<br />
