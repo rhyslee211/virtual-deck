@@ -122,6 +122,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                         <option value="switch-scene">Switch Scene</option>
                         <option value="mute-mic">Mute Mic</option>
                         <option value="unmute-mic">Unmute Mic</option>
+                        <option value="toggle-mic">Toggle Mic</option>
                     </select>
                     {commandType !== "" &&           
                     <div>
@@ -131,10 +132,10 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                         <div className="text-white">Command Keybind<br />
                             <div className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800 flex flex-row justify-around items-center">
                                 <input className="w-40 h-8 bg-slate-800" value={commandKeybind} type="text" readOnly />
-                                <button className={`w-16 h-6 bg-slate-700 text-sm text-white ${isRecording ? 'border-2 border-red-600' : ''}`} onClick={handleRecordClick}>Record</button>
+                                <button className={`w-20 h-6 bg-slate-700 text-xs text-white ${isRecording ? 'border-2 border-red-600' : ''}`} onClick={handleRecordClick}>{!isRecording && "Record"}{isRecording && "Recording..."}</button>
                             </div>
                         </div>
-                        {(commandType === "mute-mic" || commandType === "unmute-mic") && <div className="text-white">Microphone Name<br />
+                        {(commandType === "mute-mic" || commandType === "unmute-mic" || commandType === "toggle-mic") && <div className="text-white">Microphone Name<br />
                             <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "switch-scene" && <div className="text-white">Scene Name<br />

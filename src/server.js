@@ -71,6 +71,18 @@ app.get('/unmute-mic', async (req, res) => {
   }
 });
 
+app.get('/toggle-mic', async (req, res) => {
+  try {
+    const inputName = req.query.inputName;
+    const { inputName: name, inputMuted: muted } = await obs.call('ToggleInputMute', { inputName: inputName });
+    console.log('Mic toggled', name, muted);
+    res.status(200).send('Mic toggled');
+  } catch (error) {
+    res.status(500).send('Failed to toggle microphone');
+    console.log(error);
+  }
+});
+
 app.get('/start-stream', async (req, res) => {
   try {
     await obs.call('StartStream');
