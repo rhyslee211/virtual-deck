@@ -130,6 +130,71 @@ app.get('/switch-scene', async (req, res) => {
   }
 });
 
+app.get('/set-videocapture-on', async (req, res) => {
+  try {
+    let sceneName = "";
+    let sceneItemId = 0;
+    let cameraName = req.query.cameraName;
+    
+    await obs.call('GetCurrentProgramScene').then((data) => {
+      //console.log(data);
+      sceneName = data.sceneName;
+    });
+
+    //console.log(sceneName);
+
+    sceneItemId = (await obs.call('GetSceneItemId', { 'sceneName': sceneName, 'sourceName': cameraName })).sceneItemId;
+
+    console.log(sceneName, sceneItemId);
+
+    await obs.call('SetSceneItemEnabled', {
+      'sceneName': sceneName, // Replace with the scene that contains the camera
+      'sceneItemId': sceneItemId,  // Replace with the camera source name
+      'sceneItemEnabled': true  // Set to false to hide the camera
+    });
+
+    res.status(200).send('Video capture on');
+  }
+  catch (error) {
+    res.status(500).send('Failed to set video capture on');
+    console.log(error);
+  }
+
+});
+
+app.get('/set-videocapture-off', async (req, res) => {
+  try {
+    let sceneName = "";
+    let sceneItemId = 0;
+    let cameraName = req.query.cameraName;
+    
+    await obs.call('GetCurrentProgramScene').then((data) => {
+      //console.log(data);
+      sceneName = data.sceneName;
+    });
+
+    //console.log(sceneName);
+
+    sceneItemId = (await obs.call('GetSceneItemId', { 'sceneName': sceneName, 'sourceName': cameraName })).sceneItemId;
+
+    console.log(sceneName, sceneItemId);
+
+    await obs.call('SetSceneItemEnabled', {
+      'sceneName': sceneName, // Replace with the scene that contains the camera
+      'sceneItemId': 12,  // Replace with the camera source name
+      'sceneItemEnabled': false  // Set to false to hide the camera
+    });
+
+    res.status(200).send('Video capture off');
+  }
+  catch (error) {
+    res.status(500).send('Failed to set video capture off');
+    console.log(error);
+  }
+
+});
+  
+
 app.get('/check-connection', async (req, res) => {
   try {
     await obs.call('GetVersion');
