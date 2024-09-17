@@ -115,14 +115,29 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                 <div className="text-white mt-4 w-full">Command Type <br />
                     <select onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800">
                         <option value=""></option>
-                        <option value="start-stream">Start Stream</option>
-                        <option value="stop-stream">Stop Stream</option>
-                        <option value="start-recording">Start Recording</option>
-                        <option value="stop-recording">Stop Recording</option>
-                        <option value="switch-scene">Switch Scene</option>
-                        <option value="mute-mic">Mute Mic</option>
-                        <option value="unmute-mic">Unmute Mic</option>
-                        <option value="toggle-mic">Toggle Mic</option>
+                        <optgroup label="OBS Studio">
+                            <option value="start-stream">Start Stream</option>
+                            <option value="stop-stream">Stop Stream</option>
+                            <option value="start-recording">Start Recording</option>
+                            <option value="stop-recording">Stop Recording</option>
+                            <option value="switch-scene">Switch Scene</option>
+                            <option value="mute-mic">Mute Mic</option>
+                            <option value="unmute-mic">Unmute Mic</option>
+                            <option value="toggle-mic">Toggle Mic</option>
+                            <option value="toggle-webcam">Toggle Webcam</option>
+                        </optgroup>
+                        <optgroup label="Twitch">
+                            <option value="run-twitch-ad">Run Twitch Ad</option>
+                            <option value="raid-channel">Raid Channel</option>
+                            <option value="host-channel">Host Channel</option>
+                            <option value="marker">Create Marker</option>
+                            <option value="clip">Create Clip</option>
+                        </optgroup>
+                        <optgroup label="System">
+                            <option value="run-application">Run App</option>
+                            <option value="open-url">Open URL</option>
+                            <option value="run-script">Run Script</option>
+                        </optgroup>
                     </select>
                     {commandType !== "" &&           
                     <div>
