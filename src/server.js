@@ -3,6 +3,7 @@ const express = require('express');
 const {default: OBSWebSocket} = require('obs-websocket-js');
 const os = require('os');
 //const OBSWebSocket = require('obs-websocket-js').default;
+const { exec } = require('child_process');
 const path = require('path');
 
 const app = express();
@@ -216,6 +217,42 @@ app.get('/connect-to-obs', async (req, res) => {
     res.status(500).send('Failed to connect to OBS WebSocket');
     console.log(error);
   }
+});
+
+app.get('/run-application', async (req, res) => {
+  exec(req.query.application, (error, stdout, stderr) => {
+    if (error) {
+      res.status(500).send(`Failed to run application: ${req.query.application}`);
+      console.error(`Failed to run application: ${req.query.application}`);
+      return;
+    }
+    res.status(200).send(`Running application: ${req.query.application}`);
+    console.log(`Running application: ${req.query.application}`);
+  });
+});
+
+app.get('/open-url', async (req, res) => {
+  exec(`start ${req.query.url}`, (error, stdout, stderr) => {
+    if (error) {
+      res.status(500).send(`Failed to open URL: ${req.query.url}`);
+      console.error(`Failed to open URL: ${req.query.url}`);
+      return;
+    }
+    res.status(200).send(`Opening URL: ${req.query.url}`);
+    console.log(`Opening URL: ${req.query.url}`);
+  });
+});
+
+app.get('/run-script', async (req, res) => {
+  exec(req.query.script, (error, stdout, stderr) => {
+    if (error) {
+      res.status(500).send(`Failed to run script: ${req.query.script}`);
+      console.error(`Failed to run script: ${req.query.script}`);
+      return;
+    }
+    res.status(200).send(`Running script: ${req.query.script}`);
+    console.log(`Running script: ${req.query.script}`);
+  });
 });
 
 function connectToOBS() {
