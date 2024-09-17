@@ -248,6 +248,7 @@ app.get('/run-script', async (req, res) => {
     if (error) {
       res.status(500).send(`Failed to run script: ${req.query.script}`);
       console.error(`Failed to run script: ${req.query.script}`);
+      console.log(error);
       return;
     }
     res.status(200).send(`Running script: ${req.query.script}`);
