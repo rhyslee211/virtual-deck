@@ -9,9 +9,23 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
     const [sceneName, setSceneName] = useState("");
     const [buttonColor, setButtonColor] = useState("#22d3ee");
     const [isRecording, setIsRecording] = useState(false);
+    const [applicationName, setApplicationName] = useState("");
+    const [url, setUrl] = useState("");
+    const [script, setScript] = useState("");
+    const [cameraName, setCameraName] = useState("");
 
     const handleSelectChange = (e) => {
         setCommandType(e.target.value);
+
+        resetInputs();
+    }
+
+    const resetInputs = () => {
+        setMicrophoneName("");
+        setSceneName("");
+        setApplicationName("");
+        setUrl("");
+        setScript("");
     }
 
     const getAllInputs = () => {
@@ -22,6 +36,18 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
         }
         if (sceneName !== "") {
             inputs += "?sceneName=" + sceneName;
+        }
+        if (applicationName !== "") {
+            inputs += "?applicationName=" + applicationName;
+        }
+        if (url !== "") {
+            inputs += "?url=" + url;
+        }
+        if (script !== "") {
+            inputs += "?script=" + script;
+        }
+        if (cameraName !== "") {
+            inputs += "?cameraName=" + cameraName;
         }
 
         return inputs;
@@ -155,6 +181,29 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                         </div>}
                         {commandType === "switch-scene" && <div className="text-white">Scene Name<br />
                             <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setSceneName(event.target.value)} type="text" />
+                        </div>}
+                        {commandType === "toggle-webcam" && <div className="text-white">Webcam Name<br />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCameraName(event.target.value)} type="text" />
+                        </div>}
+                        {commandType === "run-twitch-ad" && <div className="text-white">Ad Length<br />
+                            <select className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800">
+                                <option value="30">30 Seconds</option>
+                                <option value="60">60 Seconds</option>
+                                <option value="90">90 Seconds</option>
+                                <option value="120">120 Seconds</option>
+                            </select>
+                        </div>}
+                        {commandType === "raid-channel" || commandType === "host-channel" && <div className="text-white">Channel Name<br />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
+                        </div>}
+                        {commandType === "run-application" && <div className="text-white">Application Name<br />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setApplicationName(event.target.value)} type="text" />
+                        </div>}
+                        {commandType === "open-url" && <div className="text-white">URL<br />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setUrl(event.target.value)} type="text" />
+                        </div>}
+                        {commandType === "run-script" && <div className="text-white">Script<br />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setScript(event.target.value)} type="text" />
                         </div>}
                         <div className="text-white">Background Color<br />
                             <div className="pt-6 flex flex-row justify-around">
