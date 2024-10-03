@@ -2,7 +2,7 @@
 
 ## What is VirtualDeck?
 
-VirtualDeck is a stream deck built into your computer. Instead of buying an entire new device, users can assign keybindings to macros that perform tasks such as:
+VirtualDeck is a stream deck built into your computer. Instead of buying an entire new device, users can assign keybindings and buttons to macros that perform tasks such as:
 
 * Muting mic in OBS
 * Switching OBS Scenes
