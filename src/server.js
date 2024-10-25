@@ -53,6 +53,18 @@ app.get('/mute-mic', async (req, res) => {
   }
 });
 
+
+app.get('/auth/twitch/getAuthToken/responsehandler', (req, res) => {
+  console.log(req.query);
+  res.send('Twitch auth response received: Auth Code - ' + req.query.code);
+});
+
+app.get('/auth/twitch/getAuthToken', (req, res) => {
+  const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=ymnyfpont4e0b4vnzv6lk40hzq8n31&redirect_uri=http://localhost:3000/auth/twitch/getAuthToken/responsehandler&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`;
+  res.redirect(authUrl);
+});
+
+
 app.get('/unmute-mic', async (req, res) => {
   try {
     //const { inputName, inputMuted } = await obs.call('ToggleInputMute', { inputName: 'Mic/Aux' });
