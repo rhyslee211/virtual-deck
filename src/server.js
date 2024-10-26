@@ -57,6 +57,9 @@ app.get('/mute-mic', async (req, res) => {
 app.get('/auth/twitch/getAuthToken/responsehandler', (req, res) => {
   console.log(req.query);
   res.send('Twitch auth response received: Auth Code - ' + req.query.code);
+
+  const authCode = req.query.code;
+
 });
 
 app.get('/auth/twitch/getAuthToken', (req, res) => {
