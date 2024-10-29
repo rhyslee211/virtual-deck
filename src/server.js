@@ -67,7 +67,12 @@ app.get('/auth/twitch/authToken/responsehandler', (req, res) => {
   console.log('responsehandler' + req.query);
   res.send('Twitch auth response received: Auth Code - ' + req.query.code);
 
+<<<<<<< HEAD
   twitchAuthCode = req.query.code;
+=======
+  const authCode = req.query.code;
+
+>>>>>>> 4bc44d0c42bd203f9d002fd23397079da72a83ad
 });
 
 app.get('/auth/twitch/authToken/getAccessToken', (req, res) => {

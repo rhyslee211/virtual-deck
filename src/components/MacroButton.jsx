@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import { TiDeleteOutline  } from "react-icons/ti";
+import { TiDelete  } from "react-icons/ti";
 
 /*
 
@@ -107,7 +107,7 @@ function MacroButton(props) {
             onMouseLeave={() => buttonRef.current.style.backgroundColor = props.color}
         >
             {props.icon}
-            {props.isEditing && <button onClick={handleDeleteButtonClick} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-400 h-min w-min"><TiDeleteOutline  size={15} /></button>}
+            {props.isEditing && <button onClick={handleDeleteButtonClick} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400 h-min w-min"><TiDelete  size={15} /></button>}
         </button>
     );
 }
