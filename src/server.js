@@ -5,6 +5,9 @@ const os = require('os');
 //const OBSWebSocket = require('obs-websocket-js').default;
 const { exec } = require('child_process');
 const path = require('path');
+const { unstable_renderSubtreeIntoContainer } = require('react-dom');
+require('dotenv').config({ path: '.env.local' });
+
 
 const app = express();
 const port = 3000;
@@ -17,6 +20,12 @@ const obs = new OBSWebSocket();
 //let OBS_WEBSOCKET_PASSWORD = 'your_password';
 let OBS_WEBSOCKET_ADDRESS = '';
 let OBS_WEBSOCKET_PASSWORD = '';
+let twitchAuthCode = '';
+let Client_ID = process.env.TWITCH_CLIENT_ID;
+let Client_Secret = process.env.TWITCH_CLIENT_SECRET;
+
+console.log(Client_ID);
+console.log(Client_Secret);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -54,13 +63,38 @@ app.get('/mute-mic', async (req, res) => {
 });
 
 
-app.get('/auth/twitch/getAuthToken/responsehandler', (req, res) => {
-  console.log(req.query);
+app.get('/auth/twitch/authToken/responsehandler', (req, res) => {
+  console.log('responsehandler' + req.query);
   res.send('Twitch auth response received: Auth Code - ' + req.query.code);
+
+  twitchAuthCode = req.query.code;
 });
 
-app.get('/auth/twitch/getAuthToken', (req, res) => {
-  const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=ymnyfpont4e0b4vnzv6lk40hzq8n31&redirect_uri=http://localhost:3000/auth/twitch/getAuthToken/responsehandler&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`;
+app.get('/auth/twitch/authToken/getAccessToken', (req, res) => {
+  if(twitchAuthCode === undefined || twitchAuthCode === '') {
+    res.status(500).send('Twitch auth code not received');
+  }
+  else {
+    res.status(200).send(twitchAuthCode);
+  }
+});
+
+
+app.get('/auth/twitch/authToken/setAccessToken', (req, res) => {
+  if(req.query.authCode === '') {
+    res.status(500).send('Twitch auth code not received');
+  }
+  else {
+    twitchAuthCode = req.query.authCode;
+    res.status(200).send(twitchAuthCode);
+  }
+});
+
+
+app.get('/auth/twitch/authToken/getAuthToken', (req, res) => {
+  const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${Client_ID}&redirect_uri=http://localhost:3000/auth/twitch/authToken/responsehandler&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`;
+  
+  console.log(authUrl);
   res.redirect(authUrl);
 });
 
