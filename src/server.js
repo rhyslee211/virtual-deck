@@ -6,7 +6,9 @@ const os = require('os');
 const { exec } = require('child_process');
 const path = require('path');
 const { unstable_renderSubtreeIntoContainer } = require('react-dom');
+const { get } = require('http');
 require('dotenv').config({ path: '.env.local' });
+const axios = require('axios');
 
 
 const app = express();
@@ -20,9 +22,11 @@ const obs = new OBSWebSocket();
 //let OBS_WEBSOCKET_PASSWORD = 'your_password';
 let OBS_WEBSOCKET_ADDRESS = '';
 let OBS_WEBSOCKET_PASSWORD = '';
-let twitchAuthCode = '';
+let Authorization_Code = '';
 let Client_ID = process.env.TWITCH_CLIENT_ID;
 let Client_Secret = process.env.TWITCH_CLIENT_SECRET;
+let Access_Token = '';
+let Refresh_Token = '';
 
 console.log(Client_ID);
 console.log(Client_Secret);
@@ -63,45 +67,143 @@ app.get('/mute-mic', async (req, res) => {
 });
 
 
-app.get('/auth/twitch/authToken/responsehandler', (req, res) => {
-  console.log('responsehandler' + req.query);
-  res.send('Twitch auth response received: Auth Code - ' + req.query.code);
-
-<<<<<<< HEAD
-  twitchAuthCode = req.query.code;
-=======
-  const authCode = req.query.code;
-
->>>>>>> 4bc44d0c42bd203f9d002fd23397079da72a83ad
+app.get('/auth/twitch/allTokens', (req, res) => {
+  res.send('Authorization Code: ' + Authorization_Code + ' Access Token: ' + Access_Token + ' Refresh Token: ' + Refresh_Token);
 });
 
-app.get('/auth/twitch/authToken/getAccessToken', (req, res) => {
-  if(twitchAuthCode === undefined || twitchAuthCode === '') {
+
+app.get('/auth/twitch/authToken/responsehandler', async (req, res) => {
+
+  if(req.query.code === '' || req.query.code === undefined) {
     res.status(500).send('Twitch auth code not received');
   }
-  else {
-    res.status(200).send(twitchAuthCode);
+  else{
+    //res.send('Twitch auth response received: Auth Code - ' + req.query.code);
+    Authorization_Code = req.query.code;
+
+    try {
+      const tokenResponse = await axios.post('https://id.twitch.tv/oauth2/token', null, {
+          params: {
+              client_id: Client_ID,
+              client_secret: Client_Secret,
+              code: Authorization_Code,
+              grant_type: 'authorization_code',
+              redirect_uri: 'https://localhost:3000/auth/twitch/accessToken/responsehandler',
+          },
+      });
+
+      Access_Token = tokenResponse.data.access_token; // Get the access token
+      Refresh_Token = tokenResponse.data.refresh_token; // Get the refresh token
+      
+      // You can now use the access token to access Twitch API on behalf of the user
+      res.send('Access Token: ' + Access_Token);
+  } catch (error) {
+      console.error('Error getting access token:', error);
+      res.status(500).send('Error getting access token');
+  }
+
   }
 });
 
+app.get('/auth/twitch/accessToken/responsehandler', (req, res) => {
 
-app.get('/auth/twitch/authToken/setAccessToken', (req, res) => {
+  if(req.query.code === '' || req.query.code === undefined) {
+    res.status(500).send('Twitch auth code not received');
+  }
+  else{
+    res.send('Twitch auth response received: Auth Code - ' + req.query.code);
+    Access_Token = req.query.access_token;
+    Refresh_Token = req.query.refresh_token;
+  }
+});
+
+app.get('/auth/twitch/authToken/setAuthToken', (req, res) => {
   if(req.query.authCode === '') {
     res.status(500).send('Twitch auth code not received');
   }
   else {
-    twitchAuthCode = req.query.authCode;
-    res.status(200).send(twitchAuthCode);
+    Authorization_Code = req.query.authCode;
+    res.status(200).send(Authorization_Code);
   }
 });
 
-
-app.get('/auth/twitch/authToken/getAuthToken', (req, res) => {
-  const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${Client_ID}&redirect_uri=http://localhost:3000/auth/twitch/authToken/responsehandler&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`;
-  
-  console.log(authUrl);
-  res.redirect(authUrl);
+app.get('/auth/twitch/authToken/getAccessToken', (req, res) => {
+  if(Authorization_Code === '') {
+    getAuthToken(res);
+  }
+  else {
+    getAccessToken(res);
+  }
 });
+
+async function getAccessToken(res) {
+  try {
+    if(Refresh_Token === '') {
+      const tokenUrl = `https://id.twitch.tv/oauth2/token?client_id=${Client_ID}&client_secret=${Client_Secret}&code=${Authorization_Code}&grant_type=authorization_code&redirect_uri=http://localhost:3000/auth/twitch/accessToken/responsehandler`;
+      res.redirect(tokenUrl);
+    }
+    else {
+      refreshAccessToken(res);
+    }
+  } catch (error) {
+    console.error('Error generating token URL:', error);
+  }
+}
+
+
+async function getAuthToken(res) {
+  try {
+    const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${Client_ID}&redirect_uri=http://localhost:3000/auth/twitch/authToken/responsehandler&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`;
+
+    res.redirect(authUrl);
+  } catch (error) {
+    console.error('Error generating auth URL:', error);
+  }
+}
+
+async function refreshAccessToken(res) {
+  try {
+    //const tokenUrl = `https://id.twitch.tv/oauth2/token?client_id=${Client_ID}&client_secret=${Client_Secret}&grant_type=refresh_token&refresh_token=${Refresh_Token}`;
+    
+    const tokenResponse = await axios.post('https://id.twitch.tv/oauth2/token', null, {
+      params: {
+          client_id: Client_ID,
+          client_secret: Client_Secret,
+          refresh_token: Refresh_Token,
+          grant_type: 'refresh_token'
+      },
+    });
+
+    res.send('Access Token: ' + tokenResponse.data.access_token);
+    
+    Access_Token = tokenResponse.data.access_token; // Get the access token
+  } catch (error) {
+    console.error('Error generating token URL:', error);
+    res.error('Error generating token URL');
+  }
+}
+
+
+async function validateToken() {
+  try {
+      const response = await axios.get('https://id.twitch.tv/oauth2/validate', {
+          headers: {
+              'Authorization': `Bearer ${Access_Token}`
+          }
+      });
+      console.log('Token is valid:', response.data);
+  } catch (error) {
+      if (error.response && error.response.status === 401) {
+          console.log('Access token is invalid or expired.');
+
+          refreshAccessToken();
+
+          // Handle token refresh here
+      } else {
+          console.error('Error validating token:', error);
+      }
+  }
+}
 
 
 app.get('/unmute-mic', async (req, res) => {

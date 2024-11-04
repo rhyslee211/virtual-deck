@@ -196,7 +196,7 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-slate-700 overflow-hidden">
+    <div className="flex flex-col h-screen w-screen bg-slate-700 overflow-hidden">
       <WindowsControls />
       <Toaster toastOptions={{ className: '',style:{ background: '#000329', color: '#FFFFFF'}}} />
       <div className="flex flex-row flex-grow">
