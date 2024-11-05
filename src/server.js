@@ -27,6 +27,7 @@ let Client_ID = process.env.TWITCH_CLIENT_ID;
 let Client_Secret = process.env.TWITCH_CLIENT_SECRET;
 let Access_Token = '';
 let Refresh_Token = '';
+let User_ID = '';
 
 console.log(Client_ID);
 console.log(Client_Secret);
@@ -94,9 +95,11 @@ app.get('/auth/twitch/authToken/responsehandler', async (req, res) => {
 
       Access_Token = tokenResponse.data.access_token; // Get the access token
       Refresh_Token = tokenResponse.data.refresh_token; // Get the refresh token
+
+      await getUserId(res);
       
       // You can now use the access token to access Twitch API on behalf of the user
-      res.send('Access Token: ' + Access_Token);
+      //res.send('Access Token: ' + Access_Token);
   } catch (error) {
       console.error('Error getting access token:', error);
       res.status(500).send('Error getting access token');
@@ -104,6 +107,23 @@ app.get('/auth/twitch/authToken/responsehandler', async (req, res) => {
 
   }
 });
+
+async function getUserId(res) {
+  try {
+    const response = await axios.get('https://api.twitch.tv/helix/users', {
+        headers: {
+          Authorization: `Bearer ${Access_Token}`,
+          'Client-ID': Client_ID
+        }
+    });
+
+    User_ID = response.data.data[0].id;
+    //res.send('User ID: ' + User_ID);
+  } catch (error) {
+    console.error('Error getting user ID:', error);
+    res.status(500).send('Error getting user ID');
+  }
+}
 
 app.get('/auth/twitch/accessToken/responsehandler', (req, res) => {
 
@@ -153,7 +173,7 @@ async function getAccessToken(res) {
 
 async function getAuthToken(res) {
   try {
-    const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${Client_ID}&redirect_uri=http://localhost:3000/auth/twitch/authToken/responsehandler&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls&state=c3ab8aa609ea11e793ae92361f002671`;
+    const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${Client_ID}&redirect_uri=http://localhost:3000/auth/twitch/authToken/responsehandler&scope=user%3Aedit%3Abroadcast+clips%3Aedit+channel%3Aedit%3Acommercial&state=c3ab8aa609ea11e793ae92361f002671`;
 
     res.redirect(authUrl);
   } catch (error) {
@@ -184,7 +204,7 @@ async function refreshAccessToken(res) {
 }
 
 
-async function validateToken() {
+async function validateToken(req, res, next) {
   try {
       const response = await axios.get('https://id.twitch.tv/oauth2/validate', {
           headers: {
@@ -192,6 +212,7 @@ async function validateToken() {
           }
       });
       console.log('Token is valid:', response.data);
+      next();
   } catch (error) {
       if (error.response && error.response.status === 401) {
           console.log('Access token is invalid or expired.');
@@ -202,8 +223,93 @@ async function validateToken() {
       } else {
           console.error('Error validating token:', error);
       }
+    next(error); 
   }
 }
+
+async function validateUser(req, res, next) {
+  
+  try {
+    const response = await axios.get('https://api.twitch.tv/helix/users', {
+        headers: {
+          Authorization: `Bearer ${Access_Token}`,
+          'Client-ID': Client_ID
+        }
+    });
+
+    User_ID = response.data.data[0].id;
+    console.log('User ID:', User_ID);
+
+    next();
+  }
+  catch (error) {
+    console.error('Error getting user ID:', error);
+    next(error);
+  }
+
+}
+
+
+app.get('/create-stream-marker', validateToken, validateUser, async (req, res) => {
+  try {
+    const streamMarker = await axios.post('https://api.twitch.tv/helix/streams/markers', null, {
+      headers: {
+          'Authorization': `Bearer ${Access_Token}`,
+          'Client-ID': Client_ID
+      },
+      params: {
+          user_id: User_ID,
+          description: 'Stream marker description'
+      }
+    });
+
+    res.status(200).send('Stream marker created');
+    console.log('Stream marker created:', streamMarker.data);
+  } catch (error) {
+    console.error('Error creating stream marker:', error);
+    res.status(500).send('Failed to create stream marker');
+  }
+});
+
+app.get('/create-stream-clip', validateToken, validateUser, async (req, res) => {
+  try {
+    const streamClip = await axios.post('https://api.twitch.tv/helix/clips', null, {
+      headers: {
+          'Authorization': `Bearer ${Access_Token}`,
+          'Client-ID': Client_ID
+      },
+      params: {
+          broadcaster_id: User_ID,
+          has_delay: false
+      }
+    });
+
+    res.status(200).send('Stream clip created');
+    console.log('Stream marker created:', streamClip.data);
+  } catch (error) {
+    console.error('Error creating stream clip:', error);
+    res.status(500).send('Failed to create stream clip');
+  }
+});
+
+app.get('/run-stream-ad', validateToken, validateUser, async (req, res) => {
+  try {
+    const streamAd = await axios.post('https://api.twitch.tv/helix/channels/commercial', null, {
+      headers: {
+          'Authorization': `Bearer ${Access_Token}`,
+          'Client-ID': Client_ID
+      },
+      params: {
+          broadcaster_id: User_ID,
+          length: req.query.adlength
+      }
+    });
+    res.status(200).send('Stream ad running');
+  } catch (error) {
+    console.error('Error running stream ad:', error);
+    res.status(500).send('Failed to run stream ad');
+  }
+});
 
 
 app.get('/unmute-mic', async (req, res) => {
