@@ -28,9 +28,10 @@ let Client_Secret = process.env.TWITCH_CLIENT_SECRET;
 let Access_Token = '';
 let Refresh_Token = '';
 let User_ID = '';
+let User_name = '';
 
-console.log(Client_ID);
-console.log(Client_Secret);
+//console.log(Client_ID);
+//console.log(Client_Secret);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -82,12 +83,14 @@ app.get('/auth/twitch/authToken/responsehandler', async (req, res) => {
     //res.send('Twitch auth response received: Auth Code - ' + req.query.code);
     Authorization_Code = req.query.code;
 
+    //console.log("Authorization_Code: " + req.query.code);
+
     try {
       const tokenResponse = await axios.post('https://id.twitch.tv/oauth2/token', null, {
           params: {
               client_id: Client_ID,
               client_secret: Client_Secret,
-              code: Authorization_Code,
+              code: req.query.code,
               grant_type: 'authorization_code',
               redirect_uri: 'https://localhost:3000/auth/twitch/accessToken/responsehandler',
           },
@@ -97,7 +100,28 @@ app.get('/auth/twitch/authToken/responsehandler', async (req, res) => {
       Refresh_Token = tokenResponse.data.refresh_token; // Get the refresh token
 
       await getUserId(res);
-      
+
+
+      //res.status(200).send("Twitch connection established. You may close this window now.");
+
+      //console.log(tokenResponse.ok);
+
+      if (tokenResponse.status === 200) {
+        //console.log('Access Token:', tokenData.access_token);
+        res.send(`
+          <script>
+            //console.log('Sending message to parent window');
+            //console.log(window.opener.document.title)
+            try {
+              window.opener.postMessage({ twitchConnected: true , twitchUsername: '${User_name}'}, 'file://');
+            } catch (error) {
+              console.error('Error sending message to parent window:', error);
+            }
+            console.log('Origin: ',window.location.origin);
+            //window.close();
+          </script>
+      `);
+    }      
       // You can now use the access token to access Twitch API on behalf of the user
       //res.send('Access Token: ' + Access_Token);
   } catch (error) {
@@ -118,6 +142,7 @@ async function getUserId(res) {
     });
 
     User_ID = response.data.data[0].id;
+    User_name = response.data.data[0].display_name;
     //res.send('User ID: ' + User_ID);
   } catch (error) {
     console.error('Error getting user ID:', error);
@@ -148,11 +173,29 @@ app.get('/auth/twitch/authToken/setAuthToken', (req, res) => {
 });
 
 app.get('/auth/twitch/authToken/getAccessToken', (req, res) => {
-  if(Authorization_Code === '') {
-    getAuthToken(res);
-  }
-  else {
-    getAccessToken(res);
+  getAuthToken(res);
+});
+
+app.get('/auth/twitch/validateToken', async (req, res) => {
+
+  try {
+    const response = await axios.get('https://id.twitch.tv/oauth2/validate', {
+        headers: {
+            'Authorization': `Bearer ${Access_Token}`
+        }
+    });
+    //console.log('Token is valid:', response.data);
+    res.status(200).send('Token is valid');
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+        console.log('Access token is invalid or expired.');
+
+        refreshAccessToken();
+
+        // Handle token refresh here
+    } else {
+        console.error('Error validating token:', error);
+    }
   }
 });
 
@@ -194,12 +237,12 @@ async function refreshAccessToken(res) {
       },
     });
 
-    res.send('Access Token: ' + tokenResponse.data.access_token);
+    res.status(200).send('Access token refreshed');
     
     Access_Token = tokenResponse.data.access_token; // Get the access token
   } catch (error) {
     console.error('Error generating token URL:', error);
-    res.error('Error generating token URL');
+    res.status(500).send('Error generating token URL');
   }
 }
 

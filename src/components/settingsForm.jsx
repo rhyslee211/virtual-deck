@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { FaTwitch } from 'react-icons/fa';
 
-function SettingsForm({closeForm, setObsPort, setObsPassword, setTwitchApiKey, saveSettings , obsPort, obsPassword, twitchApiKey}) {
+
+function SettingsForm({closeForm, setObsPort, setObsPassword, saveSettings , obsPort, obsPassword,twitchUsername,setTwitchUsername,isTwitchConnected,setIsTwitchConnected}) {
 
     const [tempObsPort, setTempObsPort] = React.useState('');
     const [tempObsPassword, setTempObsPassword] = React.useState('');
-    const [tempTwitchApiKey, setTempTwitchApiKey] = React.useState('');
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
     const handleFormSubmit = () => {
         setObsPort(tempObsPort);
         setObsPassword(tempObsPassword);
-        setTwitchApiKey(tempTwitchApiKey);
-        console.log(tempObsPort, tempObsPassword, tempTwitchApiKey);
+        console.log(tempObsPort, tempObsPassword);
         //saveSettings();
         //closeForm();
         setIsFormSubmitted(true);
@@ -21,18 +21,63 @@ function SettingsForm({closeForm, setObsPort, setObsPassword, setTwitchApiKey, s
         closeForm();
     }
 
+    const handleTwitchConnectButtonClick = async () => {
+
+        console.log('Origin: ',window.location.origin);
+
+        const popup = window.open(
+            'http://localhost:3000/auth/twitch/authToken/getAccessToken',
+            'TwitchAuthPopup', // Name of the popup window
+            'width=500,height=700,resizable,scrollbars=yes,status=yes'
+        );
+
+        const handleMessage = (event) => {
+            console.log('Received message:', event);
+            if (event.origin !== 'http://localhost:3000') {
+                return;
+            }
+            console.log('event.data', event.data);
+            if (event.data.twitchConnected) {
+                setIsTwitchConnected(true);
+                setTwitchUsername(event.data.twitchUsername);
+                popup.close();
+                window.removeEventListener('message', handleMessage);
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+
+    }
+
+    const verifyTwitchConnection = async () => {
+        if (isTwitchConnected) {
+            const response = await fetch('http://localhost:3000/auth/twitch/validateToken')
+
+            if (response.status === 200) {
+                console.log('Twitch token is valid');
+            }
+            else {
+                console.log('Twitch token is invalid');
+                setIsTwitchConnected(false);
+            }
+        }
+    }
+
     useEffect(() => {
         setTempObsPort(obsPort);
         setTempObsPassword(obsPassword);
-        setTempTwitchApiKey(twitchApiKey);
-    }, [obsPort, obsPassword, twitchApiKey]);
+    }, [obsPort, obsPassword]);
 
     useEffect(() => {
         if (isFormSubmitted) {
             saveSettings();
             closeForm();
         }
-    }, [isFormSubmitted, tempObsPort, tempObsPassword, tempTwitchApiKey, saveSettings, closeForm]);
+    }, [isFormSubmitted, tempObsPort, tempObsPassword, saveSettings, closeForm]);
+
+    useEffect(() => {
+        verifyTwitchConnection();
+    }, [isTwitchConnected]);
 
     return (
         <div className='w-full h-full bg-slate-700 flex justify-center pt-6'>
@@ -44,9 +89,12 @@ function SettingsForm({closeForm, setObsPort, setObsPassword, setTwitchApiKey, s
                     <div className="text-white">OBS Websocket Password<br />
                         <input type="password" className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setTempObsPassword(event.target.value)} value={tempObsPassword} />
                     </div>
-                    <div className="text-white">Twitch API Key<br />
-                        <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setTempTwitchApiKey(event.target.value)} type="text" value={tempTwitchApiKey} />
-                    </div>
+                    <button className="flex flex-row justify-around w-48 h-12 mt-4 mb-4 px-2 rounded-md bg-slate-800 border border-white text-white items-center justify-center align-middle custom-twitch-style" onClick={handleTwitchConnectButtonClick}>
+                        <FaTwitch size={32} />
+                        <div className='overflow-hidden text-ellipsis whitespace-nowrap flex-1'>
+                            {!isTwitchConnected && 'Connect to Twitch'} {isTwitchConnected && twitchUsername}
+                        </div>
+                    </button>
                 </div>
 
                 <div className="flex flex-row text-white justify-between w-full">

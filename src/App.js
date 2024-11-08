@@ -18,7 +18,8 @@ function App() {
   const [firstRun, setFirstRun] = useState(true);
   const [obsPort, setObsPort] = useState("");
   const [obsPassword, setObsPassword] = useState("");
-  const [twitchApiKey, setTwitchApiKey] = useState("");
+  const [isTwitchConnected, setIsTwitchConnected] = useState(false);
+  const [twitchUsername, setTwitchUsername] = useState('');
 
   const checkConnection = async () => {
     const response = await fetch('http://localhost:3000/check-connection');
@@ -77,7 +78,7 @@ function App() {
 
   async function saveSettings() {
     try {
-      const response = await ipcRenderer.invoke('save-settings', {obsPort, obsPassword, twitchApiKey});
+      const response = await ipcRenderer.invoke('save-settings', {obsPort, obsPassword});
       //console.log(response);
     } catch (error) {
       console.error('Failed to save settings:', error);
@@ -89,7 +90,6 @@ function App() {
       const settings = await ipcRenderer.invoke('load-settings');
       setObsPort(settings.obsPort);
       setObsPassword(settings.obsPassword);
-      setTwitchApiKey(settings.twitchApiKey);
     } catch (error) {
       console.error('Failed to load settings:', error);
     }
@@ -204,7 +204,7 @@ function App() {
         <div className="flex-grow">
           {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection}></MacroArea>}
           {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
-          {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} setTwitchApiKey={setTwitchApiKey} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchApiKey={twitchApiKey}></SettingsForm>}
+          {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchUsername={twitchUsername} setTwitchUsername={setTwitchUsername} isTwitchConnected={isTwitchConnected} setIsTwitchConnected={setIsTwitchConnected}></SettingsForm>}
         </div>
       </div>
     </div>
