@@ -172,6 +172,18 @@ app.get('/auth/twitch/authToken/setAuthToken', (req, res) => {
   }
 });
 
+app.get('/auth/twitch/revokeToken', (req, res) => {
+  
+  Authorization_Code = '';
+  Access_Token = '';
+  Refresh_Token = '';
+  User_ID = '';
+  User_name = '';
+
+  res.status(200).send('Twitch token revoked');
+
+});
+
 app.get('/auth/twitch/authToken/getAccessToken', (req, res) => {
   getAuthToken(res);
 });
