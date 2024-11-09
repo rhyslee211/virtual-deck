@@ -3,7 +3,7 @@ import { FaPlus, FaPencilAlt  } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { SiObsstudio } from "react-icons/si";
 
-function Sidebar({onFormButtonClick, onEditButtonClick, isEditing, formState, onSettingsButtonClick, connectToOBS, obsConnected}) {
+function Sidebar({onFormButtonClick, onEditButtonClick, isEditing, formState, onSettingsButtonClick, connectToOBS, obsConnected, setIsTwitchConnected, isTwitchConnected}) {
     return (
         <div className="w-16 bg-slate-800 h-full">
             <div className="flex flex-col items-center justify-between h-full">

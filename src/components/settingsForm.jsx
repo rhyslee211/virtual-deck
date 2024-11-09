@@ -124,11 +124,11 @@ function SettingsForm({closeForm, setObsPort, setObsPassword, saveSettings , obs
             </div>
 
             {isRevokingTwitchToken && <div className='w-full h-full bg-black bg-opacity-50 absolute top-0 left-0 flex justify-center items-center'>
-                <div className='w-96 h-48 bg-slate-700 flex flex-col justify-around rounded-lg'>
+                <div className='w-96 h-48 bg-slate-600 flex flex-col justify-around rounded-lg border-white border-2'>
                     <div className='flex flex-col justify-around'>
                         <div className="text-white text-center">Disconnect from Twitch?</div>
                         <div className="flex flex-row text-white justify-around w-96">
-                            <button onClick={handleTwitchDisconnectButtonClick} className="w-36 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">Yes</button>
+                            <button onClick={handleTwitchDisconnectButtonClick} className="w-36 h-12 mt-4 mb-4 rounded-md bg-red-500 text-slate-800 border border-white hover:bg-red-400">Yes</button>
                             <button onClick={()=>setIsRevokingTwitchToken(false)} className="w-36 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">No</button>
                         </div>
                     </div>
