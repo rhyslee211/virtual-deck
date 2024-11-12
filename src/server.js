@@ -9,6 +9,7 @@ const { unstable_renderSubtreeIntoContainer } = require('react-dom');
 const { get } = require('http');
 require('dotenv').config({ path: '.env.local' });
 const axios = require('axios');
+const open = require('open');
 
 
 const app = express();
@@ -337,7 +338,10 @@ app.get('/create-stream-clip', validateToken, validateUser, async (req, res) => 
           broadcaster_id: User_ID,
           has_delay: false
       }
+
     });
+
+    open('https://www.twitch.tv/' + User_name + '/clip/' + streamClip.data.id);
 
     res.status(200).send('Stream clip created');
     console.log('Stream marker created:', streamClip.data);
@@ -356,7 +360,7 @@ app.get('/run-stream-ad', validateToken, validateUser, async (req, res) => {
       },
       params: {
           broadcaster_id: User_ID,
-          length: req.query.adlength
+          length: req.query.duration || 30
       }
     });
     res.status(200).send('Stream ad running');

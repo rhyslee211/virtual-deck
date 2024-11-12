@@ -13,6 +13,9 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
     const [url, setUrl] = useState("");
     const [script, setScript] = useState("");
     const [cameraName, setCameraName] = useState("");
+    const [channelName, setChannelName] = useState("");
+    const [duration, setDuration] = useState(0); 
+
 
     const handleSelectChange = (e) => {
         setCommandType(e.target.value);
@@ -26,6 +29,9 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
         setApplicationName("");
         setUrl("");
         setScript("");
+        setCameraName("");
+        setChannelName("");
+        setDuration(0);
     }
 
     const getAllInputs = () => {
@@ -48,6 +54,12 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
         }
         if (cameraName !== "") {
             inputs += "?cameraName=" + cameraName;
+        }
+        if (channelName !== "") {
+            inputs += "?channelName=" + channelName;
+        }
+        if (duration !== 0) {
+            inputs += "?duration=" + duration;
         }
 
         return inputs;
@@ -139,7 +151,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
         <div className="w-full h-full bg-slate-700 flex justify-center">
             <div className="h-full w-96 flex flex-col items-center justify-between">
                 <div className="text-white mt-4 w-full">Command Type <br />
-                    <select onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800">
+                    <select onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800 scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
                         <option value=""></option>
                         <optgroup label="OBS Studio">
                             <option value="start-stream">Start Stream</option>
@@ -153,11 +165,10 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                             <option value="toggle-webcam">Toggle Webcam</option>
                         </optgroup>
                         <optgroup label="Twitch">
-                            <option value="run-twitch-ad">Run Twitch Ad</option>
+                            <option value="run-stream-ad">Run Ad</option>
                             <option value="raid-channel">Raid Channel</option>
-                            <option value="host-channel">Host Channel</option>
-                            <option value="marker">Create Marker</option>
-                            <option value="clip">Create Clip</option>
+                            <option value="create-stream-marker">Create Marker</option>
+                            <option value="create-stream-clip">Create Clip</option>
                         </optgroup>
                         <optgroup label="System">
                             <option value="run-application">Run App</option>
@@ -185,14 +196,6 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                         {commandType === "toggle-webcam" && <div className="text-white">Webcam Name<br />
                             <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCameraName(event.target.value)} type="text" />
                         </div>}
-                        {commandType === "run-twitch-ad" && <div className="text-white">Ad Length<br />
-                            <select className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800">
-                                <option value="30">30 Seconds</option>
-                                <option value="60">60 Seconds</option>
-                                <option value="90">90 Seconds</option>
-                                <option value="120">120 Seconds</option>
-                            </select>
-                        </div>}
                         {commandType === "raid-channel" || commandType === "host-channel" && <div className="text-white">Channel Name<br />
                             <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
                         </div>}
@@ -205,6 +208,27 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                         {commandType === "run-script" && <div className="text-white">Script<br />
                             <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setScript(event.target.value)} type="text" />
                         </div>}
+                        {commandType === "raid-channel" || commandType === "host-channel" && <div className="text-white">Channel Name<br />
+                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setChannelName(event.target.value)} type="text" />
+                        </div>}
+                        {commandType === "run-stream-ad" && <div className="text-white">Ad Length<br />
+                            <select className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event) => setDuration(Number(event.target.value))}>
+                                <option value="30">30 Seconds</option>
+                                <option value="60">60 Seconds</option>
+                                <option value="90">90 Seconds</option>
+                                <option value="120">120 Seconds</option>
+                                <option value="150">150 Seconds</option>
+                                <option value="180">180 Seconds</option>
+                            </select>
+                        </div>}
+                        {/*commandType === "create-stream-clip" && <div className="text-white">Clip Length<br />
+                            <select className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event) => setDuration(Number(event.target.value))}>
+                                <option value="15">15 Seconds</option>
+                                <option value="30">30 Seconds</option>
+                                <option value="45">45 Seconds</option>
+                                <option value="60">60 Seconds</option>
+                            </select>
+                        </div>*/}
                         <div className="text-white">Background Color<br />
                             <div className="pt-6 flex flex-row justify-around">
                                 <button onClick={(event)=>setButtonColor("#22d3ee")} 

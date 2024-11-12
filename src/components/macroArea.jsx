@@ -1,7 +1,7 @@
 import React, {useRef} from "react";
 import MacroButton from '../components/MacroButton';
 
-function MacroArea({macros, isEditing, setMacros, deleteMacro, checkConnection}) {
+function MacroArea({macros, isEditing, setMacros, deleteMacro, checkConnection, toastErrorMessage}) {
 
     const updatePosition = (key, newX, newY) => {
         // Update the position of the button
@@ -31,6 +31,7 @@ function MacroArea({macros, isEditing, setMacros, deleteMacro, checkConnection})
                     macroAreaRef = {macroAreaRef}
                     deleteMacro={deleteMacro}
                     checkConnection={checkConnection}
+                    toastErrorMessage={toastErrorMessage}
                 ></MacroButton>
             })}
         </div>

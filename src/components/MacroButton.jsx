@@ -28,6 +28,9 @@ function MacroButton(props) {
 
             props.checkConnection();
             console.log(response);
+            if(response.status !== 200){
+                props.toastErrorMessage('Failed to run macro');
+            }
         }
 
     }
