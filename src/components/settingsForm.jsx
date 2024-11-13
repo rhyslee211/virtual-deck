@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { FaTwitch } from 'react-icons/fa';
 
 
-function SettingsForm({closeForm, setObsPort, setObsPassword, saveSettings , obsPort, obsPassword,twitchUsername,setTwitchUsername,isTwitchConnected,setIsTwitchConnected}) {
+function SettingsForm({closeForm, setObsPort, setObsPassword, saveSettings , obsPort, obsPassword,twitchUsername,setTwitchUsername,isTwitchConnected,connectToTwitch,isRevokingTwitchToken,setIsRevokingTwitchToken, disconnectFromTwitch, verifyTwitchConnection}) {
 
     const [tempObsPort, setTempObsPort] = React.useState('');
     const [tempObsPassword, setTempObsPassword] = React.useState('');
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-    const [isRevokingTwitchToken, setIsRevokingTwitchToken] = useState(false);
 
     const handleFormSubmit = () => {
         setObsPort(tempObsPort);
@@ -24,63 +23,14 @@ function SettingsForm({closeForm, setObsPort, setObsPassword, saveSettings , obs
 
     const handleTwitchConnectButtonClick = async () => {
 
-        if(!isTwitchConnected){
-            const popup = window.open(
-                'http://localhost:3000/auth/twitch/authToken/getAccessToken',
-                'TwitchAuthPopup', // Name of the popup window
-                'width=500,height=700,resizable,scrollbars=yes,status=yes'
-            );
-
-            const handleMessage = (event) => {
-                console.log('Received message:', event);
-                if (event.origin !== 'http://localhost:3000') {
-                    return;
-                }
-                console.log('event.data', event.data);
-                if (event.data.twitchConnected) {
-                    setIsTwitchConnected(true);
-                    setTwitchUsername(event.data.twitchUsername);
-                    popup.close();
-                    window.removeEventListener('message', handleMessage);
-                }
-            };
-
-            window.addEventListener('message', handleMessage);
-
-        }
-        else{
-            /*const response = await fetch('http://localhost:3000/auth/twitch/revokeToken');
-            if(response.status === 200){
-                setIsTwitchConnected(false);
-            }*/
-
-            setIsRevokingTwitchToken(true);
-        }
+        connectToTwitch();
 
     }
 
     const handleTwitchDisconnectButtonClick = async () => {
-        const response = await fetch('http://localhost:3000/auth/twitch/revokeToken');
 
-        if(response.status === 200){
-            setIsTwitchConnected(false);
-            setTwitchUsername('');
-        }
-        setIsRevokingTwitchToken(false);
-    }
+        disconnectFromTwitch();
 
-    const verifyTwitchConnection = async () => {
-        if (isTwitchConnected) {
-            const response = await fetch('http://localhost:3000/auth/twitch/validateToken')
-
-            if (response.status === 200) {
-                console.log('Twitch token is valid');
-            }
-            else {
-                console.log('Twitch token is invalid');
-                setIsTwitchConnected(false);
-            }
-        }
     }
 
     useEffect(() => {

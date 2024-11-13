@@ -20,6 +20,7 @@ function App() {
   const [obsPassword, setObsPassword] = useState("");
   const [isTwitchConnected, setIsTwitchConnected] = useState(false);
   const [twitchUsername, setTwitchUsername] = useState('');
+  const [isRevokingTwitchToken, setIsRevokingTwitchToken] = useState(false);
 
   const checkConnection = async () => {
     const response = await fetch('http://localhost:3000/check-connection');
@@ -35,6 +36,64 @@ function App() {
       toastErrorMessage('No OBS connection');
     }
   }
+
+  const connectToTwitch = async () => {
+    if(!isTwitchConnected){
+      const popup = window.open(
+          'http://localhost:3000/auth/twitch/authToken/getAccessToken',
+          'TwitchAuthPopup', // Name of the popup window
+          'width=500,height=700,resizable,scrollbars=yes,status=yes'
+      );
+
+      const handleMessage = (event) => {
+          console.log('Received message:', event);
+          if (event.origin !== 'http://localhost:3000') {
+              return;
+          }
+          console.log('event.data', event.data);
+          if (event.data.twitchConnected) {
+              setIsTwitchConnected(true);
+              setTwitchUsername(event.data.twitchUsername);
+              popup.close();
+              window.removeEventListener('message', handleMessage);
+          }
+      };
+
+      window.addEventListener('message', handleMessage);
+    }
+    else{
+        /*const response = await fetch('http://localhost:3000/auth/twitch/revokeToken');
+        if(response.status === 200){
+            setIsTwitchConnected(false);
+        }*/
+
+        setIsRevokingTwitchToken(true);
+    }
+  }
+
+  const disconnectFromTwitch = async () => {
+    const response = await fetch('http://localhost:3000/auth/twitch/revokeToken');
+
+    if(response.status === 200){
+        setIsTwitchConnected(false);
+        setTwitchUsername('');
+    }
+    setIsRevokingTwitchToken(false);
+  }
+
+  const verifyTwitchConnection = async () => {
+    if (isTwitchConnected) {
+        const response = await fetch('http://localhost:3000/auth/twitch/validateToken')
+
+        if (response.status === 200) {
+            console.log('Twitch token is valid');
+        }
+        else {
+            console.log('Twitch token is invalid');
+            setIsTwitchConnected(false);
+        }
+    }
+  } 
 
   const runMacroShortcutCommand = async (command) => {
     const response = await fetch(command);
@@ -200,11 +259,11 @@ function App() {
       <WindowsControls />
       <Toaster toastOptions={{ className: '',style:{ background: '#000329', color: '#FFFFFF'}}} />
       <div className="flex flex-row flex-grow">
-        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} obsConnected={obsConnected} setIsTwitchConnected={setIsTwitchConnected} isTwitchConnected={isTwitchConnected} />
+        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} obsConnected={obsConnected} connectToTwitch={connectToTwitch} isTwitchConnected={isTwitchConnected} />
         <div className="flex-grow">
           {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection} toastErrorMessage={toastErrorMessage}></MacroArea>}
           {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
-          {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchUsername={twitchUsername} setTwitchUsername={setTwitchUsername} isTwitchConnected={isTwitchConnected} setIsTwitchConnected={setIsTwitchConnected}></SettingsForm>}
+          {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchUsername={twitchUsername} setTwitchUsername={setTwitchUsername} isTwitchConnected={isTwitchConnected} connectToTwitch={connectToTwitch} isRevokingTwitchToken={isRevokingTwitchToken} setIsRevokingTwitchToken={setIsRevokingTwitchToken} disconnectFromTwitch={disconnectFromTwitch} verifyTwitchConnection={verifyTwitchConnection}></SettingsForm>}
         </div>
       </div>
     </div>
