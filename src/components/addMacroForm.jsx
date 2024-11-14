@@ -1,4 +1,5 @@
 import { React, useState, useEffect , useCallback } from "react";
+import MacroButtonDisplay from "./macroButtonDisplay";
 
 function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
 
@@ -148,7 +149,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
     }, [isRecording, handleKeyDown]);
 
     return (
-        <div className="w-full h-full bg-slate-700 flex justify-center">
+        <div className="w-full min-h-full bg-slate-700 flex justify-center bg-slate-700">
             <div className="h-full w-96 flex flex-col items-center justify-between">
                 <div className="text-white mt-4 w-full">Command Type <br />
                     <select onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800 scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
@@ -249,6 +250,10 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                             </div>
                         </div>
                     </div>}
+                </div>
+                <div className="flex flex-col items-center justify-center mt-4">
+                    <div className="text-white mb-2">Button Preview</div>
+                    <MacroButtonDisplay color={buttonColor} icon={commandText} />
                 </div>
                 <div className="flex flex-row text-white justify-between w-full">
                     <button onClick={handleFormSubmit} className="w-36 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">Save</button>

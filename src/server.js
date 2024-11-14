@@ -10,6 +10,7 @@ const { get } = require('http');
 require('dotenv').config({ path: '.env.local' });
 const axios = require('axios');
 const open = require('open');
+const keytar = require('keytar')
 
 
 const app = express();
@@ -46,6 +47,14 @@ function getLocalIpAddress() {
     }
   }
   return 'localhost'; // Fallback to localhost if no external IP is found
+}
+
+async function getRefreshToken() {
+  Refresh_Token = await keytar.getPassword('Virtual Deck', 'refresh_token');
+}
+
+async function setRefreshToken() {
+  keytar.setPassword('Virtual Deck', 'refresh_token', Refresh_Token);
 }
 
 module.exports = { getLocalIpAddress };
@@ -100,6 +109,8 @@ app.get('/auth/twitch/authToken/responsehandler', async (req, res) => {
       Access_Token = tokenResponse.data.access_token; // Get the access token
       Refresh_Token = tokenResponse.data.refresh_token; // Get the refresh token
 
+      setRefreshToken();
+
       await getUserId(res);
 
 
@@ -151,6 +162,26 @@ async function getUserId(res) {
   }
 }
 
+app.get('/auth/twitch/getUser', async (req, res) => {
+
+  try {
+    const response = await axios.get('https://api.twitch.tv/helix/users', {
+        headers: {
+          Authorization: `Bearer ${Access_Token}`,
+          'Client-ID': Client_ID
+        }
+
+    });
+
+    User_ID = response.data.data[0].id;
+    User_name = response.data.data[0].display_name;
+    res.status(200).send({Username: User_name, UserID: User_ID});
+  } catch (error) {
+    console.error('Error getting user ID:', error);
+    res.status(500).send('Error getting user ID');
+  }
+});
+
 app.get('/auth/twitch/accessToken/responsehandler', (req, res) => {
 
   if(req.query.code === '' || req.query.code === undefined) {
@@ -160,6 +191,8 @@ app.get('/auth/twitch/accessToken/responsehandler', (req, res) => {
     res.send('Twitch auth response received: Auth Code - ' + req.query.code);
     Access_Token = req.query.access_token;
     Refresh_Token = req.query.refresh_token;
+
+    setRefreshToken();
   }
 });
 
@@ -203,7 +236,7 @@ app.get('/auth/twitch/validateToken', async (req, res) => {
     if (error.response && error.response.status === 401) {
         console.log('Access token is invalid or expired.');
 
-        refreshAccessToken();
+        refreshAccessToken(res);
 
         // Handle token refresh here
     } else {
@@ -259,6 +292,26 @@ async function refreshAccessToken(res) {
   }
 }
 
+async function refreshAccessTokenStartup() {
+  try {
+    //const tokenUrl = `https://id.twitch.tv/oauth2/token?client_id=${Client_ID}&client_secret=${Client_Secret}&grant_type=refresh_token&refresh_token=${Refresh_Token}`;
+    
+    const tokenResponse = await axios.post('https://id.twitch.tv/oauth2/token', null, {
+      params: {
+          client_id: Client_ID,
+          client_secret: Client_Secret,
+          refresh_token: Refresh_Token,
+          grant_type: 'refresh_token'
+      },
+    });
+
+    
+    Access_Token = tokenResponse.data.access_token; // Get the access token
+  } catch (error) {
+    console.error('Error generating token URL:', error);
+  }
+}
+
 
 async function validateToken(req, res, next) {
   try {
@@ -273,7 +326,7 @@ async function validateToken(req, res, next) {
       if (error.response && error.response.status === 401) {
           console.log('Access token is invalid or expired.');
 
-          refreshAccessToken();
+          refreshAccessToken(res);
 
           // Handle token refresh here
       } else {
@@ -610,4 +663,16 @@ obs.on('SwitchScenes', data => {
 app.listen(port, server, () => {
   console.log(`Server running at http://${server}:${port}`);
 });
+
+
+async function performStartupActions() {
+  //connectToOBS();
+  await getRefreshToken();
+  if(Refresh_Token !== '') {
+    await refreshAccessTokenStartup();
+  }
+}
+
+performStartupActions();
+
 

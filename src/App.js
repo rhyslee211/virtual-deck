@@ -67,6 +67,7 @@ function App() {
             setIsTwitchConnected(false);
         }*/
 
+        setFormState("settingsForm");
         setIsRevokingTwitchToken(true);
     }
   }
@@ -82,16 +83,20 @@ function App() {
   }
 
   const verifyTwitchConnection = async () => {
-    if (isTwitchConnected) {
-        const response = await fetch('http://localhost:3000/auth/twitch/validateToken')
 
-        if (response.status === 200) {
-            console.log('Twitch token is valid');
-        }
-        else {
-            console.log('Twitch token is invalid');
-            setIsTwitchConnected(false);
-        }
+    const response = await fetch('http://localhost:3000/auth/twitch/validateToken')
+
+    if (response.status === 200) {
+        console.log('Twitch token is valid');
+
+        const UsernameResponse = await fetch('http://localhost:3000/auth/twitch/getUser');
+        const username = await UsernameResponse.json();
+        setIsTwitchConnected(true);
+        setTwitchUsername(username.Username);
+    }
+    else {
+        console.log('Twitch token is invalid');
+        setIsTwitchConnected(false);
     }
   } 
 
@@ -225,6 +230,7 @@ function App() {
       loadMacros();
       loadSettings();
       setHasRun(true);
+      setTimeout(verifyTwitchConnection(),3000);
     }
   }, [hasRun]);
 
@@ -255,12 +261,12 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-slate-700 overflow-hidden">
+    <div className="flex flex-col h-screen w-screen">
       <WindowsControls />
       <Toaster toastOptions={{ className: '',style:{ background: '#000329', color: '#FFFFFF'}}} />
-      <div className="flex flex-row flex-grow">
+      <div className="flex flex-row w-full h-full">
         <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} obsConnected={obsConnected} connectToTwitch={connectToTwitch} isTwitchConnected={isTwitchConnected} />
-        <div className="flex-grow">
+        <div className="overflow-auto w-full h-full scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
           {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection} toastErrorMessage={toastErrorMessage}></MacroArea>}
           {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
           {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchUsername={twitchUsername} setTwitchUsername={setTwitchUsername} isTwitchConnected={isTwitchConnected} connectToTwitch={connectToTwitch} isRevokingTwitchToken={isRevokingTwitchToken} setIsRevokingTwitchToken={setIsRevokingTwitchToken} disconnectFromTwitch={disconnectFromTwitch} verifyTwitchConnection={verifyTwitchConnection}></SettingsForm>}
