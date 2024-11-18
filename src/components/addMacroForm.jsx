@@ -1,7 +1,7 @@
 import { React, useState, useEffect , useCallback } from "react";
 import MacroButtonDisplay from "./macroButtonDisplay";
 
-function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
+function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false, macroToEdit}) {
 
     const [commandType, setCommandType] = useState("");
     const [commandText, setCommandText] = useState("");
@@ -78,13 +78,21 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
             return;
         }
 
-        addMacro({
-            command: "http://localhost:3000/" + commandType + getAllInputs(), 
-            color: buttonColor, 
-            icon: commandText, 
-            keys: commandKeybind, 
-            position: {x: 100, y: 100}
-        });
+        if (editMode) {
+            macroToEdit.command = "http://localhost:3000/" + commandType + getAllInputs();
+            macroToEdit.color = buttonColor;
+            macroToEdit.icon = commandText;
+            macroToEdit.keys = commandKeybind;
+        }
+        else {
+            addMacro({
+                command: "http://localhost:3000/" + commandType + getAllInputs(), 
+                color: buttonColor, 
+                icon: commandText, 
+                keys: commandKeybind, 
+                position: {x: 100, y: 100}
+            });
+        }
         closeForm();
     }
 
@@ -135,6 +143,42 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
             }
         });
     }, []);
+
+    useEffect(() => {
+        if (editMode) {
+            console.log(macroToEdit);
+            setCommandType(macroToEdit.command);
+            setCommandText(macroToEdit.icon);
+            setCommandKeybind(macroToEdit.keys);
+            setButtonColor(macroToEdit.color);
+
+
+            if (macroToEdit.command.includes("inputName")) {
+                setMicrophoneName(macroToEdit.command.split("inputName=")[1]);
+            }
+            if (macroToEdit.command.includes("sceneName")) {
+                setSceneName(macroToEdit.command.split("sceneName=")[1]);
+            }
+            if (macroToEdit.command.includes("applicationName")) {
+                setApplicationName(macroToEdit.command.split("applicationName=")[1]);
+            }
+            if (macroToEdit.command.includes("url")) {
+                setUrl(macroToEdit.command.split("url=")[1]);
+            }
+            if (macroToEdit.command.includes("script")) {
+                setScript(macroToEdit.command.split("script=")[1]);
+            }
+            if (macroToEdit.command.includes("cameraName")) {
+                setCameraName(macroToEdit.command.split("cameraName=")[1]);
+            }
+            if (macroToEdit.command.includes("channelName")) {
+                setChannelName(macroToEdit.command.split("channelName=")[1]);
+            }
+            if (macroToEdit.command.includes("duration")) {
+                setDuration(Number(macroToEdit.command.split("duration=")[1]));
+            }
+        }
+    }, [editMode]);
 
     useEffect(() => {
         if (isRecording) {
@@ -189,31 +233,31 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage}) {
                             </div>
                         </div>
                         {(commandType === "mute-mic" || commandType === "unmute-mic" || commandType === "toggle-mic") && <div className="text-white">Microphone Name<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
+                            <input defaultValue={microphoneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "switch-scene" && <div className="text-white">Scene Name<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setSceneName(event.target.value)} type="text" />
+                            <input defaultValue={sceneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setSceneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "toggle-webcam" && <div className="text-white">Webcam Name<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCameraName(event.target.value)} type="text" />
+                            <input defaultValue={cameraName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCameraName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "raid-channel" || commandType === "host-channel" && <div className="text-white">Channel Name<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
+                            <input defaultValue={microphoneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "run-application" && <div className="text-white">Application Name<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setApplicationName(event.target.value)} type="text" />
+                            <input defaultValue={applicationName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setApplicationName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "open-url" && <div className="text-white">URL<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setUrl(event.target.value)} type="text" />
+                            <input defaultValue={url} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setUrl(event.target.value)} type="text" />
                         </div>}
                         {commandType === "run-script" && <div className="text-white">Script<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setScript(event.target.value)} type="text" />
+                            <input defaultValue={script} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setScript(event.target.value)} type="text" />
                         </div>}
                         {commandType === "raid-channel" || commandType === "host-channel" && <div className="text-white">Channel Name<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setChannelName(event.target.value)} type="text" />
+                            <input defaultValue={channelName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setChannelName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "run-stream-ad" && <div className="text-white">Ad Length<br />
-                            <select className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event) => setDuration(Number(event.target.value))}>
+                            <select defaultValue={duration} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event) => setDuration(Number(event.target.value))}>
                                 <option value="30">30 Seconds</option>
                                 <option value="60">60 Seconds</option>
                                 <option value="90">90 Seconds</option>
