@@ -27,7 +27,7 @@ function WindowsControls() {
 
     return (
         <div className="top-0 left-0 w-full bg-slate-900 flex flex-row justify-between">
-            <div className="text-white pl-2 w-fit" >Virtual Deck</div>
+            <div className="text-offwhite pl-2 w-fit" >Virtual Deck</div>
             <div className="grow" style={{ WebkitAppRegion: 'drag' }}></div>
             <div className="flex justify-end items-center w-fit">
                 <button className="text-white px-4 py-2 w-fit h-fit hover:bg-slate-700" onClick={() => controlWindow('minimize')}>

@@ -214,6 +214,8 @@ app.get('/auth/twitch/revokeToken', (req, res) => {
   User_ID = '';
   User_name = '';
 
+  keytar.deletePassword('Virtual Deck', 'refresh_token');
+
   res.status(200).send('Twitch token revoked');
 
 });

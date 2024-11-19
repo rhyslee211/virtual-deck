@@ -23,7 +23,9 @@ function MacroButtonDisplay({ color, icon }) {
             onMouseEnter={() => buttonRef.current.style.backgroundColor = hoverColor}
             onMouseLeave={() => buttonRef.current.style.backgroundColor = color}
         >
-            {icon}
+            <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
+                {icon}
+            </div>
         </button>
     );
 }

@@ -21,6 +21,7 @@ function App() {
   const [isTwitchConnected, setIsTwitchConnected] = useState(false);
   const [twitchUsername, setTwitchUsername] = useState('');
   const [isRevokingTwitchToken, setIsRevokingTwitchToken] = useState(false);
+  const [macroIndex, setMacroIndex] = useState(0);
 
   const checkConnection = async () => {
     const response = await fetch('http://localhost:3000/check-connection');
@@ -184,6 +185,15 @@ function App() {
     }
   }
 
+  const openEditMacroForm = (index) => {
+    if(formState !== "editMacroForm") {
+      setIsEditing(true);
+      //setIsFormVisible(true);
+      setFormState("editMacroForm");
+      setMacroIndex(index);
+    }
+  }
+
   const closeForm = () => {
     if(formState !== "macroArea") {
       //setIsFormVisible(false);
@@ -199,12 +209,6 @@ function App() {
 
   const deleteMacro = (index) => {
     setMacros(macros.filter((_, i) => i !== index)); // Remove macro from the list
-  }
-
-  const editMacro = (index, updatedMacro) => {
-    const updatedMacros = [...macros];
-    updatedMacros[index] = updatedMacro;
-    setMacros(updatedMacros);
   }
 
   const toggleEditor = () => {
@@ -267,8 +271,9 @@ function App() {
       <div className="flex flex-row w-full h-full">
         <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} obsConnected={obsConnected} connectToTwitch={connectToTwitch} isTwitchConnected={isTwitchConnected} />
         <div className="overflow-auto w-full h-full scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
-          {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} checkConnection={checkConnection} toastErrorMessage={toastErrorMessage}></MacroArea>}
+          {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} openEditMacroForm={openEditMacroForm} checkConnection={checkConnection} toastErrorMessage={toastErrorMessage}></MacroArea>}
           {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
+          {formState === "editMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage} editMode={true} macroToEdit={macros[macroIndex]}></AddMacroForm>}
           {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchUsername={twitchUsername} setTwitchUsername={setTwitchUsername} isTwitchConnected={isTwitchConnected} connectToTwitch={connectToTwitch} isRevokingTwitchToken={isRevokingTwitchToken} setIsRevokingTwitchToken={setIsRevokingTwitchToken} disconnectFromTwitch={disconnectFromTwitch} verifyTwitchConnection={verifyTwitchConnection}></SettingsForm>}
         </div>
       </div>

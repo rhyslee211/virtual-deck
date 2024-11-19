@@ -1,5 +1,6 @@
 import React, {useEffect} from "react";
 import { TiDelete  } from "react-icons/ti";
+import { HiOutlineDotsCircleHorizontal } from "react-icons/hi";
 
 /*
 
@@ -13,7 +14,7 @@ import { TiDelete  } from "react-icons/ti";
 
 */
 
-function MacroButton({isEditing, color, icon, keys, command, position, index, updatePosition, deleteMacro, macroAreaRef, checkConnection, toastErrorMessage}) {
+function MacroButton({isEditing, color, icon, keys, command, position, index, updatePosition, deleteMacro, openEditMacroForm, macroAreaRef, checkConnection, toastErrorMessage}) {
 
     const [isDragging, setIsDragging] = React.useState(false);
     const buttonRef = React.useRef(null);
@@ -85,6 +86,10 @@ function MacroButton({isEditing, color, icon, keys, command, position, index, up
         deleteMacro(index);
     }
 
+    const handleEditButtonClick = () => {
+        openEditMacroForm(index);
+    }
+
     useEffect(() => {
         if (isDragging) {
             window.addEventListener('mousemove', handleMouseMove);
@@ -109,7 +114,11 @@ function MacroButton({isEditing, color, icon, keys, command, position, index, up
             onMouseEnter={() => buttonRef.current.style.backgroundColor = hoverColor}
             onMouseLeave={() => buttonRef.current.style.backgroundColor = color}
         >
-            {icon}
+            <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
+                {icon}
+            </div>
+            
+            {isEditing && <button onClick={handleEditButtonClick} className="absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-400 h-min w-min"><HiOutlineDotsCircleHorizontal  size={15} /></button>}
             {isEditing && <button onClick={handleDeleteButtonClick} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400 h-min w-min"><TiDelete  size={15} /></button>}
         </button>
     );

@@ -197,7 +197,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
             <div className="h-full w-96 flex flex-col items-center justify-between">
                 <div className="text-white mt-4 w-full">Command Type <br />
                     <select onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800 scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
-                        <option value=""></option>
+                        <option defaultValue={commandType}></option>
                         <optgroup label="OBS Studio">
                             <option value="start-stream">Start Stream</option>
                             <option value="stop-stream">Stop Stream</option>
