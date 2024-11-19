@@ -147,7 +147,8 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
     useEffect(() => {
         if (editMode) {
             console.log(macroToEdit);
-            setCommandType(macroToEdit.command);
+            setCommandType(macroToEdit.command.split("http://localhost:3000/")[1].split("?")[0]);
+            console.log(macroToEdit.command.split("http://localhost:3000/")[1].split("?")[0])
             setCommandText(macroToEdit.icon);
             setCommandKeybind(macroToEdit.keys);
             setButtonColor(macroToEdit.color);
@@ -196,8 +197,8 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
         <div className="w-full min-h-full bg-slate-700 flex justify-center bg-slate-700">
             <div className="h-full w-96 flex flex-col items-center justify-between">
                 <div className="text-white mt-4 w-full">Command Type <br />
-                    <select onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800 scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
-                        <option defaultValue={commandType}></option>
+                    <select value={commandType} onChange={handleSelectChange} className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800 scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
+                        <option></option>
                         <optgroup label="OBS Studio">
                             <option value="start-stream">Start Stream</option>
                             <option value="stop-stream">Stop Stream</option>
@@ -224,7 +225,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                     {commandType !== "" &&           
                     <div>
                         <div className="text-white">Command Text<br />
-                            <input className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCommandText(event.target.value)} type="text" />
+                            <input value={commandText} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCommandText(event.target.value)} type="text" />
                         </div>
                         <div className="text-white">Command Keybind<br />
                             <div className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800 flex flex-row justify-around items-center">
@@ -233,31 +234,31 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                             </div>
                         </div>
                         {(commandType === "mute-mic" || commandType === "unmute-mic" || commandType === "toggle-mic") && <div className="text-white">Microphone Name<br />
-                            <input defaultValue={microphoneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
+                            <input value={microphoneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "switch-scene" && <div className="text-white">Scene Name<br />
-                            <input defaultValue={sceneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setSceneName(event.target.value)} type="text" />
+                            <input value={sceneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setSceneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "toggle-webcam" && <div className="text-white">Webcam Name<br />
-                            <input defaultValue={cameraName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCameraName(event.target.value)} type="text" />
+                            <input value={cameraName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCameraName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "raid-channel" || commandType === "host-channel" && <div className="text-white">Channel Name<br />
-                            <input defaultValue={microphoneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
+                            <input value={microphoneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "run-application" && <div className="text-white">Application Name<br />
-                            <input defaultValue={applicationName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setApplicationName(event.target.value)} type="text" />
+                            <input value={applicationName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setApplicationName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "open-url" && <div className="text-white">URL<br />
-                            <input defaultValue={url} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setUrl(event.target.value)} type="text" />
+                            <input value={url} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setUrl(event.target.value)} type="text" />
                         </div>}
                         {commandType === "run-script" && <div className="text-white">Script<br />
-                            <input defaultValue={script} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setScript(event.target.value)} type="text" />
+                            <input value={script} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setScript(event.target.value)} type="text" />
                         </div>}
                         {commandType === "raid-channel" || commandType === "host-channel" && <div className="text-white">Channel Name<br />
-                            <input defaultValue={channelName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setChannelName(event.target.value)} type="text" />
+                            <input value={channelName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setChannelName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "run-stream-ad" && <div className="text-white">Ad Length<br />
-                            <select defaultValue={duration} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event) => setDuration(Number(event.target.value))}>
+                            <select value={duration} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event) => setDuration(Number(event.target.value))}>
                                 <option value="30">30 Seconds</option>
                                 <option value="60">60 Seconds</option>
                                 <option value="90">90 Seconds</option>
