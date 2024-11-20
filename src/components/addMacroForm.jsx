@@ -110,6 +110,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
 
     const handleKeyDown = useCallback((event) => {
         event.preventDefault();
+        event.stopPropagation();
         let key = event.key;
 
         if (key === " ") {
@@ -230,7 +231,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                         <div className="text-white">Command Keybind<br />
                             <div className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800 flex flex-row justify-around items-center">
                                 <input className="w-40 h-8 bg-slate-800" value={commandKeybind} type="text" readOnly />
-                                <button className={`w-20 h-6 bg-slate-700 text-xs text-white ${isRecording ? 'border-2 border-red-600' : ''}`} onClick={handleRecordClick}>{!isRecording && "Record"}{isRecording && "Recording..."}</button>
+                                <button className={`w-20 h-6 bg-slate-700 text-xs text-white ${isRecording ? 'border-2 border-amber-400' : ''}`} onClick={handleRecordClick}>{!isRecording && "Record"}{isRecording && "Recording..."}</button>
                             </div>
                         </div>
                         {(commandType === "mute-mic" || commandType === "unmute-mic" || commandType === "toggle-mic") && <div className="text-white">Microphone Name<br />

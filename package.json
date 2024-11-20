@@ -1,6 +1,21 @@
 {
   "name": "virtual-deck",
   "version": "0.1.0",
+  "build": {
+    "appId": "com.yourapp.id",
+    "productName": "Virtual Deck",
+    "files": [
+      "build/**/*",
+      "build/main.js"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "target": "nsis",
+      "artifactName": "${productName}-${version}-setup.exe"
+    }
+  },
   "main": "public/main.js",
   "homepage": "./",
   "private": true,
@@ -31,7 +46,8 @@
     "main": "electron.js",
     "build": "craco build",
     "electron-start": "electron .",
-    "dev-start": "concurrently \"craco build\" \"electron .\""
+    "dev-start": "concurrently \"craco build\" \"electron .\"",
+    "electron-build": "electron-builder"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +68,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.1",
     "concurrently": "^8.2.2",
     "css-loader": "^7.1.2",
     "electron": "^31.3.1",
@@ -60,7 +77,6 @@
     "style-loader": "^4.0.0",
     "tailwindcss": "^3.4.7",
     "wait-on": "^7.2.0",
-    "webpack-node-externals": "^3.0.0",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.1"
+    "webpack-node-externals": "^3.0.0"
   }
 }
