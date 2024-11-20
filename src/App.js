@@ -6,6 +6,7 @@ import AddMacroForm from './components/addMacroForm';
 import { Toaster, toast } from 'react-hot-toast';
 import { ipcRenderer } from "electron";
 import SettingsForm from './components/settingsForm';
+import HotkeyManager from './components/hotkeyManager';
 
 function App() {
 
@@ -183,6 +184,10 @@ function App() {
       //setIsFormVisible(true);
       setFormState("addMacroForm");
     }
+    else {
+      //setIsFormVisible(false);
+      setFormState("macroArea");
+    }
   }
 
   const openEditMacroForm = (index) => {
@@ -221,6 +226,15 @@ function App() {
   const onSettingsButtonClick = () => {
     if(formState !== "settingsForm") {
       setFormState("settingsForm");
+    }
+    else {
+      setFormState("macroArea");
+    }
+  }
+
+  const onHotkeyFormButtonClick = () => {
+    if(formState !== "hotkeyForm") {
+      setFormState("hotkeyForm");
     }
     else {
       setFormState("macroArea");
@@ -268,13 +282,14 @@ function App() {
     <div className="flex flex-col h-screen w-screen">
       <WindowsControls />
       <Toaster toastOptions={{ className: '',style:{ background: '#000329', color: '#FFFFFF'}}} />
-      <div className="flex flex-row w-full h-full">
-        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} obsConnected={obsConnected} connectToTwitch={connectToTwitch} isTwitchConnected={isTwitchConnected} />
-        <div className="overflow-auto w-full h-full scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
+      <div className="flex flex-row w-full h-full overflow-hidden">
+        <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} onHotkeyFormButtonClick={onHotkeyFormButtonClick} obsConnected={obsConnected} connectToTwitch={connectToTwitch} isTwitchConnected={isTwitchConnected} />
+        <div className="overflow-y-scroll w-full h-full scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
           {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} openEditMacroForm={openEditMacroForm} checkConnection={checkConnection} toastErrorMessage={toastErrorMessage}></MacroArea>}
           {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
           {formState === "editMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage} editMode={true} macroToEdit={macros[macroIndex]}></AddMacroForm>}
           {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchUsername={twitchUsername} setTwitchUsername={setTwitchUsername} isTwitchConnected={isTwitchConnected} connectToTwitch={connectToTwitch} isRevokingTwitchToken={isRevokingTwitchToken} setIsRevokingTwitchToken={setIsRevokingTwitchToken} disconnectFromTwitch={disconnectFromTwitch} verifyTwitchConnection={verifyTwitchConnection}></SettingsForm>}
+          {formState === "hotkeyForm" && <HotkeyManager macros={macros}></HotkeyManager>}
         </div>
       </div>
     </div>
