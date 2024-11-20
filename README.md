@@ -24,7 +24,8 @@ VirtualDeck is a stream deck built into your computer. Instead of buying an enti
 
 ```powershell
 npm install
-npm start
+npm run build
+npm run electron-start
 ```
 
 ## Planned Features
