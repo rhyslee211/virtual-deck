@@ -593,7 +593,7 @@ app.get('/connect-to-obs', async (req, res) => {
 });
 
 app.get('/run-application', async (req, res) => {
-  exec(req.query.applicationName, (error, stdout, stderr) => {
+  exec('"' + req.query.applicationName + '"', (error, stdout, stderr) => {
     if (error) {
       res.status(500).send(`Failed to run application: ${req.query.applicationName}`);
       console.error(`Failed to run application: ${req.query.applicationName}`);
