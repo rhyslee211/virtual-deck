@@ -1,4 +1,4 @@
-import { React, useState, useEffect , useCallback } from "react";
+import { React, useState, useEffect , useCallback , useRef } from "react";
 import MacroButtonDisplay from "./macroButtonDisplay";
 
 function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false, macroToEdit}) {
@@ -16,6 +16,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
     const [cameraName, setCameraName] = useState("");
     const [channelName, setChannelName] = useState("");
     const [duration, setDuration] = useState(0); 
+    const fileInputRef = useRef(null);
 
 
     const handleSelectChange = (e) => {
@@ -23,6 +24,23 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
 
         resetInputs();
     }
+
+    const openFileBrowser = () => {
+        if (fileInputRef.current) {
+          fileInputRef.current.click(); // Trigger the file input's click event
+        }
+    };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0]; // Get selected files
+        if(file){
+            console.log(file);
+            setApplicationName(file.path);
+        }
+        else {
+            console.log("No file selected");
+        }
+      };
 
     const resetInputs = () => {
         setMicrophoneName("");
@@ -247,7 +265,10 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                             <input value={microphoneName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setMicrophoneName(event.target.value)} type="text" />
                         </div>}
                         {commandType === "run-application" && <div className="text-white">Application Name<br />
-                            <input value={applicationName} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setApplicationName(event.target.value)} type="text" />
+                            <div className="flex flex-row w-64 justify-between h-8 mt-4 mb-4">
+                                <input readOnly value={applicationName ? applicationName.split("\\").pop() : ""} className="w-44 h-8 rounded-md bg-slate-800" type="text" />
+                                <button onClick={openFileBrowser} className="w-16 h-8 rounded-md bg-slate-800 text-xs">Browse...</button>
+                            </div>
                         </div>}
                         {commandType === "open-url" && <div className="text-white">URL<br />
                             <input value={url} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setUrl(event.target.value)} type="text" />
@@ -306,6 +327,13 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                     <button onClick={handleFormCancel} className="w-36 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">Cancel</button>
                 </div>
             </div>
+            <input
+                ref={fileInputRef}
+                type="file"
+                multiple={false} // Allow only a single file to be selected
+                className="hidden" // Hide the input
+                onChange={handleFileChange}
+            />
         </div>
     );
 }
