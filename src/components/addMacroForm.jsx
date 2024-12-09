@@ -1,7 +1,7 @@
 import { React, useState, useEffect , useCallback , useRef } from "react";
 import MacroButtonDisplay from "./macroButtonDisplay";
 
-function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false, macroToEdit}) {
+function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false, macroToEdit, macroIndex, updateMacro, registerShortcuts, unregisterShortcuts}) {
 
     const [commandType, setCommandType] = useState("");
     const [commandText, setCommandText] = useState("");
@@ -16,6 +16,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
     const [cameraName, setCameraName] = useState("");
     const [channelName, setChannelName] = useState("");
     const [duration, setDuration] = useState(0); 
+    const [numKeysPressed, setNumKeysPressed] = useState(0);
     const fileInputRef = useRef(null);
 
 
@@ -92,15 +93,21 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
         }
 
         if (commandText === "") {
-            toastErrorMessage("Please give this command a name");
+            toastErrorMessage("Command text is required");
             return;
         }
 
         if (editMode) {
-            macroToEdit.command = "http://localhost:3000/" + commandType + getAllInputs();
-            macroToEdit.color = buttonColor;
-            macroToEdit.icon = commandText;
-            macroToEdit.keys = commandKeybind;
+            let newMacro = {
+                command: "http://localhost:3000/" + commandType + getAllInputs(), 
+                color: buttonColor, 
+                icon: commandText, 
+                keys: commandKeybind, 
+                position: macroToEdit.position
+            }
+
+            updateMacro(macroIndex, newMacro);
+
         }
         else {
             addMacro({
@@ -125,6 +132,20 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
         console.log("Form Cancelled");
         closeForm();
     }
+
+    const handleKeyUp = useCallback((event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        setNumKeysPressed((prevNumKeysPressed) => {
+            const updatedNumKeysPressed = prevNumKeysPressed - 1;
+            if (updatedNumKeysPressed === 0) {
+              setIsRecording(false);
+            }
+            return updatedNumKeysPressed;
+          });
+    }, []);
+        
 
     const handleKeyDown = useCallback((event) => {
         event.preventDefault();
@@ -161,6 +182,9 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                 return prevKeybind;
             }
         });
+
+        setNumKeysPressed(prevNumKeysPressed => prevNumKeysPressed + 1);
+
     }, []);
 
     useEffect(() => {
@@ -203,14 +227,25 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
     useEffect(() => {
         if (isRecording) {
             window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keyup', handleKeyUp);
         } else {
             window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
         }
 
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
         };
-    }, [isRecording, handleKeyDown]);
+    }, [isRecording, handleKeyDown, handleKeyUp]);
+
+    useEffect(() => {
+        if (isRecording) {
+          unregisterShortcuts();
+        } else {
+          registerShortcuts();
+        }
+      }, [isRecording]);
 
     return (
         <div className="w-full min-h-full bg-slate-700 flex justify-center bg-slate-700">

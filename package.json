@@ -6,17 +6,26 @@
     "productName": "Virtual Deck",
     "files": [
       "build/**/*",
-      "build/main.js"
+      "main.js",
+      "src/preload.js",
+      "src/server.js"
     ],
     "directories": {
       "buildResources": "assets"
     },
     "win": {
       "target": "nsis",
-      "artifactName": "${productName}-${version}-setup.exe"
-    }
+      "icon": "build/favicon.ico"
+    },
+    "extraMetadata": {
+      "main": "build/main.js"
+    },
+    "extraResources": [
+      ".env.local"
+    ],
+    "extends": null
   },
-  "main": "public/main.js",
+  "main": "build/main.js",
   "homepage": "./",
   "private": true,
   "dependencies": {
@@ -42,8 +51,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dist": "electron-builder",
-    "main": "electron.js",
+    "dist": "rm dist && electron-builder",
     "build": "craco build",
     "electron-start": "electron .",
     "dev-start": "concurrently \"craco build\" \"electron .\"",

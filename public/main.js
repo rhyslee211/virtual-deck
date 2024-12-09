@@ -9,7 +9,12 @@ let win;
 
 function createWindow () {
 
-  server = fork(path.join(__dirname, '../src/server.js'))
+  server = fork(path.join(__dirname, '../src/server.js'),[],{
+    env: {
+      ...process.env,
+      IS_PACKAGED: app.isPackaged ? 'true' : 'false',
+    },
+  })
 
   win = new BrowserWindow({
     width: 800,
@@ -73,13 +78,34 @@ app.whenReady().then(() => {
 
   ipc.handle('register-shortcuts', async (event, macros) => {
 
-    globalShortcut.unregisterAll();
-
-    macros.forEach(macro => {
-      globalShortcut.register(macro.keys, () => {
-        win.webContents.send('shortcut-pressed', macro.command);
+    try {
+      console.log('Received macros:', macros);
+      globalShortcut.unregisterAll();
+  
+      macros.forEach(macro => {
+        if (macro.keys && macro.command) {
+          globalShortcut.register(macro.keys, () => {
+            event.sender.send('shortcut-pressed', macro.command);
+          });
+          console.log(`Registered shortcut: ${macro.keys} for command: ${macro.command}`);
+        } else {
+          console.warn('Invalid macro:', macro);
+        }
       });
-    });
+    } catch (error) {
+      console.error('Error registering shortcuts:', error);
+      throw error;
+    }
+  });
+
+  ipc.handle('unregister-shortcuts', async (event) => {
+
+    try {
+      globalShortcut.unregisterAll();
+    } catch (error) {
+      console.error('Error unregistering shortcuts:', error);
+      throw error;
+    }
   });
 
   ipc.handle('save-macros', async (event,macros) => {

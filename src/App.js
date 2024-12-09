@@ -111,6 +111,7 @@ function App() {
   }
 
   const registerShortcuts = async () => {
+    console.log("Shortcuts: ",macros);
     try {
       // Call the 'register-shortcuts' in main.js and pass the macros dictionary
       await ipcRenderer.invoke('register-shortcuts', macros);
@@ -120,11 +121,20 @@ function App() {
     }
   };
 
+  const unregisterShortcuts = async () => {
+    
+    try {
+      ipcRenderer.invoke('unregister-shortcuts');
+      console.log('Shortcuts unregistered successfully!');
+    } catch (error) {
+
+      console.error('Failed to unregister shortcuts:', error);
+    } 
+  }
+
   async function saveMacros() {
     try {
       const response = await ipcRenderer.invoke('save-macros', macros);
-
-      registerShortcuts();
       //console.log(response);
     } catch (error) {
       console.error('Failed to save macros:', error);
@@ -134,9 +144,9 @@ function App() {
   async function loadMacros() {
     try {
       const macros = await ipcRenderer.invoke('load-macros');
-      registerShortcuts();
-      //console.log(macros);
+
       setMacros(macros);
+      //console.log(macros);
     } catch (error) {
       console.error('Failed to load macros:', error);
     }
@@ -207,20 +217,39 @@ function App() {
   }
 
   const addMacro = (newMacro) => {
-    setMacros([...macros, newMacro]); // Add new macro to the list
-    saveMacros(macros);
-    console.log(macros);
+    setMacros((prevMacros) => {
+      const updatedMacros = [...prevMacros, newMacro];
+      saveMacros(updatedMacros); // Save the updated macros
+      console.log(updatedMacros);
+      return updatedMacros;
+    });
   }
-
+  
   const deleteMacro = (index) => {
-    setMacros(macros.filter((_, i) => i !== index)); // Remove macro from the list
+    setMacros((prevMacros) => {
+      const updatedMacros = prevMacros.filter((_, i) => i !== index);
+      saveMacros(updatedMacros); // Save the updated macros
+      return updatedMacros;
+    });
   }
 
+  const updateMacro = (index, updatedMacro) => {
+    setMacros((prevMacros) => {
+      const updatedMacros = [...prevMacros];
+      updatedMacros[index] = updatedMacro;
+      saveMacros(updatedMacros); // Save the updated macros
+      return updatedMacros;
+    });
+  }
+  
   const toggleEditor = () => {
-    if(formState === "macroArea") {
+    if (formState === "macroArea") {
       setIsEditing(!isEditing);
     }
-    saveMacros(macros);
+    setMacros((prevMacros) => {
+      saveMacros(prevMacros); // Save the current macros
+      return prevMacros;
+    });
   }
 
   const onSettingsButtonClick = () => {
@@ -278,18 +307,27 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (macros.length > 0) {
+      registerShortcuts();
+    }
+    else {
+      ipcRenderer.invoke('unregister-shortcuts');
+    }
+  }, [macros]);
+
   return (
     <div className="flex flex-col h-screen w-screen">
       <WindowsControls />
       <Toaster toastOptions={{ className: '',style:{ background: '#000329', color: '#FFFFFF'}}} />
       <div className="flex flex-row w-full h-full overflow-hidden">
         <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} onHotkeyFormButtonClick={onHotkeyFormButtonClick} obsConnected={obsConnected} connectToTwitch={connectToTwitch} isTwitchConnected={isTwitchConnected} />
-        <div className="overflow-y-scroll w-full h-full scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
+        <div className="w-full h-full overflow-auto scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
           {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} openEditMacroForm={openEditMacroForm} checkConnection={checkConnection} toastErrorMessage={toastErrorMessage}></MacroArea>}
-          {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage}></AddMacroForm>}
-          {formState === "editMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage} editMode={true} macroToEdit={macros[macroIndex]}></AddMacroForm>}
+          {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage} registerShortcuts={registerShortcuts} unregisterShortcuts={unregisterShortcuts}></AddMacroForm>}
+          {formState === "editMacroForm" && <AddMacroForm closeForm={closeForm} updateMacro={updateMacro} toastErrorMessage={toastErrorMessage} editMode={true} macroToEdit={macros[macroIndex]} macroIndex={macroIndex} registerShortcuts={registerShortcuts} unregisterShortcuts={unregisterShortcuts}></AddMacroForm>}
           {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchUsername={twitchUsername} setTwitchUsername={setTwitchUsername} isTwitchConnected={isTwitchConnected} connectToTwitch={connectToTwitch} isRevokingTwitchToken={isRevokingTwitchToken} setIsRevokingTwitchToken={setIsRevokingTwitchToken} disconnectFromTwitch={disconnectFromTwitch} verifyTwitchConnection={verifyTwitchConnection}></SettingsForm>}
-          {formState === "hotkeyForm" && <HotkeyManager macros={macros} setMacros={setMacros}></HotkeyManager>}
+          {formState === "hotkeyForm" && <HotkeyManager macros={macros} setMacros={setMacros} registerShortcuts={registerShortcuts} unregisterShortcuts={unregisterShortcuts}></HotkeyManager>}
         </div>
       </div>
     </div>

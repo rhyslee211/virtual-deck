@@ -7,10 +7,22 @@ const { exec } = require('child_process');
 const path = require('path');
 const { unstable_renderSubtreeIntoContainer } = require('react-dom');
 const { get } = require('http');
-require('dotenv').config({ path: '.env.local' });
+
+const isPackaged = process.env.IS_PACKAGED === 'true';
+
+const envPath = isPackaged
+  ? path.join(process.resourcesPath, '.env.local') // Adjust path as needed
+  : './.env.local';
+
+const dotenv = require('dotenv');
+
+dotenv.config({ path: envPath });
+//require('dotenv').config({ path: './.env.local' });
+//require('dotenv').config({ path: path.join(process.resourcesPath, '.env.local') });
 const axios = require('axios');
 const open = require('open');
-const keytar = require('keytar')
+const keytar = require('keytar');
+const { cli } = require('webpack');
 
 
 const app = express();
@@ -268,6 +280,9 @@ async function getAuthToken(res) {
 
     res.redirect(authUrl);
   } catch (error) {
+    if(error.response.status === 400){
+      client_id = '';
+    }
     console.error('Error generating auth URL:', error);
   }
 }
@@ -609,6 +624,7 @@ app.get('/open-url', async (req, res) => {
     if (error) {
       res.status(500).send(`Failed to open URL: ${req.query.url}`);
       console.error(`Failed to open URL: ${req.query.url}`);
+      console.error(error);
       return;
     }
     res.status(200).send(`Opening URL: ${req.query.url}`);
