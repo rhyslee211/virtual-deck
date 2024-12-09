@@ -54,10 +54,10 @@ function SettingsForm({closeForm, setObsPort, setObsPassword, saveSettings , obs
             <div className='w-96 h-full items-center bg-slate-700 flex flex-col justify-around'>
                 <div className='flex flex-col justify-around'>
                     <div className="text-white">OBS Websocket Port<br />
-                        <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setTempObsPort(event.target.value)} type="text" value={tempObsPort} />
+                        <input className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800 px-2" onChange={(event)=> setTempObsPort(event.target.value)} type="text" value={tempObsPort} />
                     </div>
                     <div className="text-white">OBS Websocket Password<br />
-                        <input type="password" className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setTempObsPassword(event.target.value)} value={tempObsPassword} />
+                        <input type="password" className="w-48 h-8 mt-4 mb-4 rounded-md bg-slate-800 px-2" onChange={(event)=> setTempObsPassword(event.target.value)} value={tempObsPassword} />
                     </div>
                     <button className="flex flex-row justify-around w-48 h-12 mt-4 mb-4 px-2 rounded-md bg-slate-800 border border-white text-white items-center justify-center align-middle custom-twitch-style" onClick={handleTwitchConnectButtonClick}>
                         <FaTwitch size={32} />
@@ -65,6 +65,9 @@ function SettingsForm({closeForm, setObsPort, setObsPassword, saveSettings , obs
                             {!isTwitchConnected && 'Connect to Twitch'} {isTwitchConnected && twitchUsername}
                         </div>
                     </button>
+                    <a href="https://www.buymeacoffee.com/rhyslee211" target="_blank"  className='w-48 h-15 mt-4 mb-4'>
+                        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" className='w-48 h-15'/>
+                    </a>
                 </div>
 
                 <div className="flex flex-row text-white justify-between w-full">

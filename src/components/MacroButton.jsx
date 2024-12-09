@@ -27,9 +27,10 @@ function MacroButton({isEditing, color, icon, keys, command, position, index, up
             console.log(command);
             const response = await fetch(command);
 
-            checkConnection();
             console.log(response);
+
             if(response.status !== 200){
+                checkConnection();
                 toastErrorMessage('Failed to run macro');
             }
         }

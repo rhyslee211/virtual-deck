@@ -138,11 +138,10 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
         event.stopPropagation();
 
         setNumKeysPressed((prevNumKeysPressed) => {
-            const updatedNumKeysPressed = prevNumKeysPressed - 1;
-            if (updatedNumKeysPressed === 0) {
+            if (prevNumKeysPressed - 1 === 0) {
               setIsRecording(false);
             }
-            return updatedNumKeysPressed;
+            return prevNumKeysPressed - 1;
           });
     }, []);
         

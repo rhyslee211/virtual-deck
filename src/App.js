@@ -107,7 +107,10 @@ function App() {
 
     console.log(response);
 
-    checkConnection();
+    if(response.status !== 200){
+      checkConnection();
+      toastErrorMessage('Failed to run macro');
+    }
   }
 
   const registerShortcuts = async () => {
