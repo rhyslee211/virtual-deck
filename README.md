@@ -20,12 +20,29 @@ VirtualDeck is a stream deck built into your computer. Instead of buying an enti
 * [![React][React.js]][React-url]
 * [![TailwindCSS][TailwindCSS-shield]][TailwindCSS-url]
 
-## To run install Node JS and clone the repository. Then run the following commands.
+## Setting Up Your Virtual Deck
+
+To build your own Virtual Deck, follow the instructions below. Alternatively, you can download a prebuilt release and run it directly—no extra steps required (currently available for Windows only).
 
 ```powershell
 npm install
 npm run build
 npm run electron-start
+```
+
+You will also need to create a .env.local file in your repository and store your twitch API Client ID and Secret there. You can get your twitch Client ID and Secret by creating an "Application Integration" app in the [Twitch Dev Portal](https://dev.twitch.tv/) with the following OAuth Redirect URLs.
+
+```plaintext
+http://localhost:3000/auth/twitch/authToken/responsehandler
+https://localhost:3000/auth/twitch/authToken/responsehandler
+http://localhost:3000/auth/twitch/accessToken/responsehandler
+https://localhost:3000/auth/twitch/accessToken/responsehandler
+```
+
+### `.env.local`
+```plaintext
+TWITCH_CLIENT_ID={Your_Twitch_Client_ID}
+TWITCH_CLIENT_SECRET={Your_Twitch_Client_Secret}
 ```
 
 ## Planned Features
