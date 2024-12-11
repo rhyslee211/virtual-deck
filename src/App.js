@@ -23,6 +23,24 @@ function App() {
   const [twitchUsername, setTwitchUsername] = useState('');
   const [isRevokingTwitchToken, setIsRevokingTwitchToken] = useState(false);
   const [macroIndex, setMacroIndex] = useState(0);
+  const [obsCommands, setObsCommands] = useState([
+    "start-stream",
+    "stop-stream",
+    "start-recording",
+    "stop-recording",
+    "switch-scene",
+    "mute-mic",
+    "unmute-mic",
+    "toggle-mic",
+    "toggle-webcam",
+  ]);
+  const [twitchCommands, setTwitchCommands] = useState([
+    "run-stream-ad",
+    "raid-channel",
+    "create-stream-marker",
+    "create-stream-clip",
+  ]);
+  
 
   const checkConnection = async () => {
     const response = await fetch('http://localhost:3000/check-connection');
@@ -113,16 +131,31 @@ function App() {
 
   const runMacroShortcutCommand = async (command) => {
 
-    let connectResponse = true;
 
-    if(!obsConnected){
-      connectResponse = await checkConnection();
+    if(obsCommands.includes(command.split('localhost:3000/')[1].split('?')[0])){
+      let connectResponse = true;
+
+      if(!obsConnected){
+        connectResponse = await checkConnection();
+      }
+
+      console.log("next" , connectResponse);
+
+      if(connectResponse){
+
+        console.log('Running command: ', command);
+
+        const response = await fetch(command);
+
+        console.log(response);
+
+        if(response.status !== 200){
+          toastErrorMessage('Failed to run macro');
+        }
+
+      }
     }
-
-    console.log("next" , connectResponse);
-
-    if(connectResponse){
-
+    else {
       console.log('Running command: ', command);
 
       const response = await fetch(command);
@@ -132,7 +165,6 @@ function App() {
       if(response.status !== 200){
         toastErrorMessage('Failed to run macro');
       }
-
     }
   }
 
