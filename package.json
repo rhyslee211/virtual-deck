@@ -15,7 +15,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "build/favicon.ico"
+      "icon": "build/virtualDeckLogoNoText.ico"
     },
     "extraMetadata": {
       "main": "build/main.js"

@@ -26,7 +26,8 @@ function WindowsControls() {
     }
 
     return (
-        <div className="top-0 left-0 w-full bg-slate-900 flex flex-row justify-between">
+        <div className="top-0 left-0 w-full bg-slate-900 flex flex-row justify-between align-middle">
+            <img src={"assets/virtualDeckLogoNoText.png"} alt="Virtual Deck Logo" className="w-6 h-6 mx-2" />
             <div className="text-offwhite pl-2 w-fit" >Virtual Deck</div>
             <div className="grow" style={{ WebkitAppRegion: 'drag' }}></div>
             <div className="flex justify-end items-center w-fit">
