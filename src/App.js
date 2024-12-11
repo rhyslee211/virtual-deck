@@ -34,8 +34,17 @@ function App() {
       }
     }
     else {
-      setObsConnected(false);
-      toastErrorMessage('No OBS connection');
+      try {
+        console.log("Trying to connect to OBS");
+        const connectResponse = await connectToOBS();
+        if(connectResponse){
+          return(true);
+        }
+      }
+      catch (error) {
+        setObsConnected(false);
+        toastErrorMessage('No OBS connection');
+      }
     }
   }
 
@@ -103,13 +112,27 @@ function App() {
   } 
 
   const runMacroShortcutCommand = async (command) => {
-    const response = await fetch(command);
 
-    console.log(response);
+    let connectResponse = true;
 
-    if(response.status !== 200){
-      checkConnection();
-      toastErrorMessage('Failed to run macro');
+    if(!obsConnected){
+      connectResponse = await checkConnection();
+    }
+
+    console.log("next" , connectResponse);
+
+    if(connectResponse){
+
+      console.log('Running command: ', command);
+
+      const response = await fetch(command);
+
+      console.log(response);
+
+      if(response.status !== 200){
+        toastErrorMessage('Failed to run macro');
+      }
+
     }
   }
 
@@ -184,6 +207,7 @@ function App() {
     if(response.status === 200) {
       setObsConnected(true);
       toastSuccessMessage('Connected to OBS');
+      return true;
     }
     else {
       setObsConnected(false);
@@ -326,7 +350,7 @@ function App() {
       <div className="flex flex-row w-full h-full overflow-hidden">
         <Sidebar onFormButtonClick={openForm} onEditButtonClick={toggleEditor} isEditing={isEditing} formState={formState} connectToOBS={connectToOBS} onSettingsButtonClick={onSettingsButtonClick} onHotkeyFormButtonClick={onHotkeyFormButtonClick} obsConnected={obsConnected} connectToTwitch={connectToTwitch} isTwitchConnected={isTwitchConnected} />
         <div className="w-full h-full overflow-auto scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700">
-          {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} openEditMacroForm={openEditMacroForm} checkConnection={checkConnection} toastErrorMessage={toastErrorMessage}></MacroArea>}
+          {formState === "macroArea" && <MacroArea macros={macros} isEditing={isEditing} setMacros={setMacros} deleteMacro={deleteMacro} openEditMacroForm={openEditMacroForm} checkConnection={checkConnection} toastErrorMessage={toastErrorMessage} runMacroShortcutCommand={runMacroShortcutCommand}></MacroArea>}
           {formState === "addMacroForm" && <AddMacroForm closeForm={closeForm} addMacro={addMacro} toastErrorMessage={toastErrorMessage} registerShortcuts={registerShortcuts} unregisterShortcuts={unregisterShortcuts}></AddMacroForm>}
           {formState === "editMacroForm" && <AddMacroForm closeForm={closeForm} updateMacro={updateMacro} toastErrorMessage={toastErrorMessage} editMode={true} macroToEdit={macros[macroIndex]} macroIndex={macroIndex} registerShortcuts={registerShortcuts} unregisterShortcuts={unregisterShortcuts}></AddMacroForm>}
           {formState === "settingsForm" && <SettingsForm closeForm={closeForm} setObsPort={setObsPort} setObsPassword={setObsPassword} saveSettings={saveSettings} obsPort={obsPort} obsPassword={obsPassword} twitchUsername={twitchUsername} setTwitchUsername={setTwitchUsername} isTwitchConnected={isTwitchConnected} connectToTwitch={connectToTwitch} isRevokingTwitchToken={isRevokingTwitchToken} setIsRevokingTwitchToken={setIsRevokingTwitchToken} disconnectFromTwitch={disconnectFromTwitch} verifyTwitchConnection={verifyTwitchConnection}></SettingsForm>}

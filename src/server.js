@@ -660,23 +660,7 @@ obs.on('ConnectionOpened', () => {
   console.log('Connection Opened');
 });
 
-obs.on('Identified', () => {
-  console.log('Identified, good to go!')
-
-  // Send some requests.
-  obs.call('GetSceneList').then((data) => {
-    console.log('Scenes:', data);
-  });
-  obs.call('GetInputList').then((data) => {
-    console.log('Inputs:', data);
-  });
-});
-
 connectToOBS();
-
-obs.on('SwitchScenes', data => {
-  console.log('SwitchScenes', data);
-});
 
 app.listen(port, server, () => {
   console.log(`Server running at http://${server}:${port}`);

@@ -14,7 +14,7 @@ import { HiOutlineDotsCircleHorizontal } from "react-icons/hi";
 
 */
 
-function MacroButton({isEditing, color, icon, keys, command, position, index, updatePosition, deleteMacro, openEditMacroForm, macroAreaRef, checkConnection, toastErrorMessage}) {
+function MacroButton({isEditing, color, icon, keys, command, position, index, updatePosition, deleteMacro, openEditMacroForm, macroAreaRef, checkConnection, toastErrorMessage, runMacroShortcutCommand}) {
 
     const [isDragging, setIsDragging] = React.useState(false);
     const buttonRef = React.useRef(null);
@@ -24,15 +24,7 @@ function MacroButton({isEditing, color, icon, keys, command, position, index, up
             setIsDragging(true);
         }
         else {
-            console.log(command);
-            const response = await fetch(command);
-
-            console.log(response);
-
-            if(response.status !== 200){
-                checkConnection();
-                toastErrorMessage('Failed to run macro');
-            }
+            await runMacroShortcutCommand(command);
         }
 
     }
