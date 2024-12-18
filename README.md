@@ -47,9 +47,9 @@ TWITCH_CLIENT_SECRET={Your_Twitch_Client_Secret}
 
 ## Planned Features
 
-Window allows configuration and button activation.
+Window allows configuration and button activation. ✅
 
-Small pop up window that allows button activation, and can be hidden with macro.
+Small pop up window that allows button activation, and can be hidden with macro. ✅
 
 Ability to control server/application from phone.
 
