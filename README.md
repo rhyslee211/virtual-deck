@@ -22,7 +22,7 @@ VirtualDeck is a stream deck built into your computer. Instead of buying an enti
 
 ## Setting Up Your Virtual Deck
 
-To build your own Virtual Deck, follow the instructions below. Alternatively, you can download a prebuilt release and run it directly—no extra steps required (currently available for Windows only).
+To build your own Virtual Deck, follow the instructions below. Alternatively, you can download a prebuilt release and run it directly—no extra steps required (currently available for Windows only). When running the prebuilt release for the first time, an "Unknown publisher" popup may appear; click "More info" and then "Run anyway" to proceed.
 
 ```powershell
 npm install
