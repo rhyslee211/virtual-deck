@@ -45,6 +45,20 @@ TWITCH_CLIENT_ID={Your_Twitch_Client_ID}
 TWITCH_CLIENT_SECRET={Your_Twitch_Client_Secret}
 ```
 
+## Using Virtual Deck
+
+Once your Virtual Deck is installed you still need to connect Twitch and set up the OBS websocket in order to use their functions. 
+
+### Connecting Twitch
+
+To connect your twitch account, click the Twitch icon in the bottom left of the screen, or navigate to settings and click the "Connect to Twitch" button. You will then need to log in to Twitch and authorize the Virtual Deck Twitch Application to allow the API connection.
+
+### Connecting OBS
+
+To connect your OBS to Virtual Deck you must go into the Tools -> Websocket Server Settings. In there check the "Enable WebSocket Server" setting. You can leave the Server Port as the default or change it if needed. Then generate a password and copy it.
+
+Now open the settings in Virtual Deck and input your Obs WebSocket Port and Obs WebSocket Password.
+
 ## Planned Features
 
 Window allows configuration and button activation. ✅
