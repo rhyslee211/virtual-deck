@@ -20,7 +20,7 @@ function HotkeyManager({ macros, setMacros , registerShortcuts , unregisterShort
 
             setMacros(prevMacros => {
                 const updatedMacros = [...prevMacros];
-                updatedMacros[macroIndex].keys = '';
+                updatedMacros[index].keys = '';
                 return updatedMacros;
             });
 
