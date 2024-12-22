@@ -265,7 +265,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                         </optgroup>
                         <optgroup label="Twitch">
                             <option value="run-stream-ad">Run Ad</option>
-                            <option value="raid-channel">Raid Channel</option>
+                            {/*<option value="raid-channel">Raid Channel</option>*/}
                             <option value="create-stream-marker">Create Marker</option>
                             <option value="create-stream-clip">Create Clip</option>
                         </optgroup>
