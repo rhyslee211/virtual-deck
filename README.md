@@ -59,6 +59,14 @@ To connect your OBS to Virtual Deck you must go into the Tools -> Websocket Serv
 
 Now open the settings in Virtual Deck and input your Obs WebSocket Port and Obs WebSocket Password.
 
+### Creating Macros
+
+To create a new macro click the + icon on the Virtual Deck sidebar. This will open a form where you can set up a variety of commands for your macro to execute. Simply select your command from the drop down, and configure all the inputs. Once you have finished configuring all of the inputs click the Save button to save the macro. It will then appear on your Virtual Deck Home Screen, and you can move it around using the Pencil icon.
+
+### Editing Macros
+
+You can edit macros by clicking the Pencil icon on the left sidebar and then selecting the three dots in the top left corner of the macro you wish to edit. This will bring up the Macro Edit form. Once you have made all of your changes, click the Save button to save the edited macro.
+
 ## Planned Features
 
 Window allows configuration and button activation. ✅
