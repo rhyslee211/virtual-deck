@@ -50,6 +50,7 @@ function App() {
         toastSuccessMessage('Connected to OBS');
         setFirstRun(false);
       }
+      return(true);
     }
     else {
       try {
