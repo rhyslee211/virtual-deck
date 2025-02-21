@@ -1,6 +1,8 @@
 import React, {useEffect} from "react";
 import { TiDelete  } from "react-icons/ti";
 import { HiOutlineDotsCircleHorizontal } from "react-icons/hi";
+import { colord } from "colord";
+import { lighten, darken } from "polished";
 
 /*
 
@@ -29,15 +31,11 @@ function MacroButton({isEditing, color, icon, keys, command, position, index, up
 
     }
 
-    const hoverColors = {
-        "#22d3ee": "#1bb7d1",
-        "#22ee9d": "#1bbb88",
-        "#eede22": "#c5c11c",
-        "#ee5e22": "#c54d1b",
-        "#d322ee": "#b01bc1",
+    const getHoverColor = (color) => {
+        return colord(color).isDark() ? lighten(0.2, color) : darken(0.2, color);
     };
 
-    const hoverColor = hoverColors[color];
+    const hoverColor = getHoverColor(color);
 
     const handleMouseMove = (event) => {
         if (isDragging) {
@@ -96,7 +94,7 @@ function MacroButton({isEditing, color, icon, keys, command, position, index, up
 
     return (
         <button ref={buttonRef}
-        className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold`}
+        className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold ${colord(color).isDark() ? "text-white" : "text-black"}`}
         onMouseDown={handleMouseDown}
             style={{position: "absolute",
                     top: position.y,

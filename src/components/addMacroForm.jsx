@@ -1,5 +1,6 @@
 import { React, useState, useEffect , useCallback , useRef } from "react";
 import MacroButtonDisplay from "./macroButtonDisplay";
+import { HexColorPicker } from "react-colorful";
 
 function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false, macroToEdit, macroIndex, updateMacro, registerShortcuts, unregisterShortcuts}) {
 
@@ -332,8 +333,8 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                             </select>
                         </div>*/}
                         <div className="text-white">Background Color<br />
-                            <div className="pt-6 flex flex-row justify-around">
-                                <button onClick={(event)=>setButtonColor("#22d3ee")} 
+                            <div className="pt-6 flex flex-row justify-start">
+                                {/*<button onClick={(event)=>setButtonColor("#22d3ee")} 
                                 className={`w-12 h-12 rounded-md bg-[#22d3ee] ${buttonColor === "#22d3ee" ? "border-2 border-white" : "" }`}
                                 ></button>
                                 <button onClick={(event)=>setButtonColor("#22ee9d")} 
@@ -347,7 +348,8 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                                 ></button>
                                 <button onClick={(event)=>setButtonColor("#d322ee")} 
                                 className={`w-12 h-12 rounded-md bg-[#d322ee] ${buttonColor === "#d322ee" ? "border-2 border-white" : "" }`}
-                                ></button>
+                                ></button>*/}
+                                <HexColorPicker color={buttonColor} onChange={setButtonColor} />
                             </div>
                         </div>
                     </div>}
