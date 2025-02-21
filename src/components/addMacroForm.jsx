@@ -349,7 +349,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                                 <button onClick={(event)=>setButtonColor("#d322ee")} 
                                 className={`w-12 h-12 rounded-md bg-[#d322ee] ${buttonColor === "#d322ee" ? "border-2 border-white" : "" }`}
                                 ></button>*/}
-                                <HexColorPicker color={buttonColor} onChange={setButtonColor} />
+                                <HexColorPicker color={buttonColor} onChange={setButtonColor} style={{ width: "256px"}} />
                             </div>
                         </div>
                     </div>}
