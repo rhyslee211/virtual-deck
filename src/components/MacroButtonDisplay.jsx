@@ -1,8 +1,9 @@
 import React from 'react';
 import { colord } from "colord";
 import { lighten, darken } from "polished";
+import { IconPickerItem } from 'react-icons-picker'
 
-function MacroButtonDisplay({ color, icon }) {
+function MacroButtonDisplay({ color, text , icon }) {
     const buttonRef = React.useRef(null);
 
     const getHoverColor = (color) => {
@@ -21,9 +22,10 @@ function MacroButtonDisplay({ color, icon }) {
             onMouseEnter={() => buttonRef.current.style.backgroundColor = hoverColor}
             onMouseLeave={() => buttonRef.current.style.backgroundColor = color}
         >
-            <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
-                {icon}
-            </div>
+            {icon !== "" && <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
+                {text}
+            </div>}
+            {icon === "" && <IconPickerItem icon={icon} size={20} />}
         </button>
     );
 }

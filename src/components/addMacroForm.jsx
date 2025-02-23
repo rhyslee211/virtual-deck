@@ -1,16 +1,19 @@
 import { React, useState, useEffect , useCallback , useRef } from "react";
 import MacroButtonDisplay from "./macroButtonDisplay";
 import { HexColorPicker } from "react-colorful";
+import IconPicker from 'react-icons-picker';
 
 function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false, macroToEdit, macroIndex, updateMacro, registerShortcuts, unregisterShortcuts}) {
 
     const [commandType, setCommandType] = useState("");
     const [commandText, setCommandText] = useState("");
+    const [commandIcon, setCommandIcon] = useState("");
     const [commandKeybind, setCommandKeybind] = useState("");
     const [microphoneName, setMicrophoneName] = useState("");
     const [sceneName, setSceneName] = useState("");
     const [buttonColor, setButtonColor] = useState("#22d3ee");
     const [isRecording, setIsRecording] = useState(false);
+    const [isIcon, setIsIcon] = useState(false);
     const [applicationName, setApplicationName] = useState("");
     const [url, setUrl] = useState("");
     const [script, setScript] = useState("");
@@ -102,7 +105,8 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
             let newMacro = {
                 command: "http://localhost:3000/" + commandType + getAllInputs(), 
                 color: buttonColor, 
-                icon: commandText, 
+                text: commandText, 
+                icon: commandIcon,
                 keys: commandKeybind, 
                 position: macroToEdit.position
             }
@@ -114,7 +118,8 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
             addMacro({
                 command: "http://localhost:3000/" + commandType + getAllInputs(), 
                 color: buttonColor, 
-                icon: commandText, 
+                text: commandText, 
+                icon: commandIcon,
                 keys: commandKeybind, 
                 position: {x: 100, y: 100}
             });
@@ -192,7 +197,9 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
             console.log(macroToEdit);
             setCommandType(macroToEdit.command.split("http://localhost:3000/")[1].split("?")[0]);
             console.log(macroToEdit.command.split("http://localhost:3000/")[1].split("?")[0])
-            setCommandText(macroToEdit.icon);
+            setCommandText(macroToEdit.text);
+            setCommandIcon(macroToEdit.icon);
+            setIsIcon(macroToEdit.icon !== "");
             setCommandKeybind(macroToEdit.keys);
             setButtonColor(macroToEdit.color);
 
@@ -278,8 +285,13 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                     </select>
                     {commandType !== "" &&           
                     <div>
-                        <div className="text-white">Command Text<br />
-                            <input value={commandText} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCommandText(event.target.value)} type="text" />
+                        <div>
+                            {!isIcon && <div className="text-white">Command Text<br />
+                                <input value={commandText} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCommandText(event.target.value)} type="text" />
+                            </div>}
+                            {isIcon && <div className="text-white">Command Icon<br />
+                                <IconPicker value={commandIcon} onChange={(icon) => setCommandIcon(icon)} />
+                            </div>}
                         </div>
                         <div className="text-white">Command Keybind<br />
                             <div className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800 flex flex-row justify-around items-center">
@@ -356,7 +368,7 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                 </div>
                 <div className="flex flex-col items-center justify-center mt-4">
                     <div className="text-white mb-2">Button Preview</div>
-                    <MacroButtonDisplay color={buttonColor} icon={commandText} />
+                    <MacroButtonDisplay color={buttonColor} text={commandText} icon={commandIcon} />
                 </div>
                 <div className="flex flex-row text-white justify-between w-full">
                     <button onClick={handleFormSubmit} className="w-36 h-12 mt-4 mb-4 rounded-md bg-slate-800 border border-white hover:bg-slate-700">Save</button>

@@ -3,6 +3,7 @@ import { TiDelete  } from "react-icons/ti";
 import { HiOutlineDotsCircleHorizontal } from "react-icons/hi";
 import { colord } from "colord";
 import { lighten, darken } from "polished";
+import { IconPickerItem } from 'react-icons-picker'
 
 /*
 
@@ -16,7 +17,7 @@ import { lighten, darken } from "polished";
 
 */
 
-function MacroButton({isEditing, color, icon, keys, command, position, index, updatePosition, deleteMacro, openEditMacroForm, macroAreaRef, checkConnection, toastErrorMessage, runMacroShortcutCommand}) {
+function MacroButton({isEditing, color, text, icon , keys, command, position, index, updatePosition, deleteMacro, openEditMacroForm, macroAreaRef, checkConnection, toastErrorMessage, runMacroShortcutCommand}) {
 
     const [isDragging, setIsDragging] = React.useState(false);
     const buttonRef = React.useRef(null);
@@ -105,10 +106,10 @@ function MacroButton({isEditing, color, icon, keys, command, position, index, up
             onMouseEnter={() => buttonRef.current.style.backgroundColor = hoverColor}
             onMouseLeave={() => buttonRef.current.style.backgroundColor = color}
         >
-            <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
-                {icon}
-            </div>
-            
+            {icon !== "" && <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
+                {text}
+            </div>}
+            {icon === "" && <IconPickerItem icon={icon} size={20} />}
             {isEditing && <button onClick={handleEditButtonClick} className="absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-400 h-min w-min"><HiOutlineDotsCircleHorizontal  size={15} /></button>}
             {isEditing && <button onClick={handleDeleteButtonClick} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400 h-min w-min"><TiDelete  size={15} /></button>}
         </button>

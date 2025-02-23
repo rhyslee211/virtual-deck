@@ -22,6 +22,7 @@ function MacroArea({macros, isEditing, setMacros, deleteMacro, openEditMacroForm
                 return <MacroButton key={index} 
                     index={index}
                     color={macro.color} 
+                    text={macro.text}
                     icon={macro.icon} 
                     keys={macro.keys} 
                     command={macro.command} 
