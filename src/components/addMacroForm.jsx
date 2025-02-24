@@ -96,8 +96,13 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
             return;
         }
 
-        if (commandText === "") {
+        if (commandText === "" && !isIcon) {
             toastErrorMessage("Command text is required");
+            return;
+        }
+
+        if (commandIcon === "" && isIcon) {
+            toastErrorMessage("Command icon is required");
             return;
         }
 
@@ -285,14 +290,22 @@ function AddMacroForm({closeForm, addMacro, toastErrorMessage, editMode = false,
                     </select>
                     {commandType !== "" &&           
                     <div>
-                        <div>
-                            {!isIcon && <div className="text-white">Command Text<br />
-                                <input value={commandText} className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800" onChange={(event)=> setCommandText(event.target.value)} type="text" />
-                            </div>}
-                            {isIcon && <div className="text-white">Command Icon<br />
-                                <IconPicker value={commandIcon} onChange={(icon) => setCommandIcon(icon)} />
-                            </div>}
-                        </div>
+                        <button onClick={(event)=> {
+                            setIsIcon(!isIcon);
+                            if(!isIcon){setCommandIcon("FaUser")}
+                            else{setCommandIcon("")}
+                            }} className={`w-24 h-8 my-2 rounded-md bg-slate-800 ${isIcon ? "border-2 border-amber-400" : ""}`}>Icon</button>
+                        {!isIcon && <div className="text-white mb-4 ">Command Text<br />
+                            <input value={commandText} className="w-64 h-8 mt-4 rounded-md bg-slate-800" onChange={(event)=> setCommandText(event.target.value)} type="text" />
+                        </div>}
+                        {isIcon && <div className="text-white mb-4">Command Icon<br />
+                            <div className="w-64 h-8 mt-2 mb-6">
+                                <IconPicker value={commandIcon} onChange={(icon) => {
+                                    console.log("Selected Icon:", icon);
+                                    setCommandIcon(icon);
+                                }}  />
+                            </div>
+                        </div>}
                         <div className="text-white">Command Keybind<br />
                             <div className="w-64 h-8 mt-4 mb-4 rounded-md bg-slate-800 flex flex-row justify-around items-center">
                                 <input className="w-40 h-8 bg-slate-800" value={commandKeybind} type="text" readOnly />

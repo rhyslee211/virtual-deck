@@ -63,6 +63,7 @@ function App() {
       catch (error) {
         setObsConnected(false);
         toastErrorMessage('No OBS connection');
+        return(false);
       }
     }
   }

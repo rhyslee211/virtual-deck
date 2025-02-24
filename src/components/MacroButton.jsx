@@ -95,7 +95,7 @@ function MacroButton({isEditing, color, text, icon , keys, command, position, in
 
     return (
         <button ref={buttonRef}
-        className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold ${colord(color).isDark() ? "text-white" : "text-black"}`}
+        className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold`}
         onMouseDown={handleMouseDown}
             style={{position: "absolute",
                     top: position.y,
@@ -106,10 +106,12 @@ function MacroButton({isEditing, color, text, icon , keys, command, position, in
             onMouseEnter={() => buttonRef.current.style.backgroundColor = hoverColor}
             onMouseLeave={() => buttonRef.current.style.backgroundColor = color}
         >
-            {icon !== "" && <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
+            {icon === "" && <div className={`overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full ${colord(color).isDark() ? "text-white" : "text-black"}`}>
                 {text}
             </div>}
-            {icon === "" && <IconPickerItem icon={icon} size={20} />}
+            {icon !== "" && <div className={`overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full ${colord(color).isDark() ? "text-white" : "text-black"}`}>
+                {icon !== "" && <IconPickerItem value={icon} size={20} />}
+            </div>}
             {isEditing && <button onClick={handleEditButtonClick} className="absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-400 h-min w-min"><HiOutlineDotsCircleHorizontal  size={15} /></button>}
             {isEditing && <button onClick={handleDeleteButtonClick} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400 h-min w-min"><TiDelete  size={15} /></button>}
         </button>

@@ -14,7 +14,7 @@ function MacroButtonDisplay({ color, text , icon }) {
 
     return (
         <button ref={buttonRef}
-            className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold ${colord(color).isDark() ? "text-white" : "text-black"}`}
+            className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold`}
             style={{
                 backgroundColor: color,
                 transition: "background-color 0.3s",
@@ -22,10 +22,12 @@ function MacroButtonDisplay({ color, text , icon }) {
             onMouseEnter={() => buttonRef.current.style.backgroundColor = hoverColor}
             onMouseLeave={() => buttonRef.current.style.backgroundColor = color}
         >
-            {icon !== "" && <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
+            {icon === "" && <div className={`overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full ${colord(color).isDark() ? "text-white" : "text-black"}`}>
                 {text}
             </div>}
-            {icon === "" && <IconPickerItem icon={icon} size={20} />}
+            {icon !== "" && <div className={`overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full ${colord(color).isDark() ? "text-white" : "text-black"}`}>
+                {icon !== "" && <IconPickerItem value={icon} size={20} />}
+            </div>}
         </button>
     );
 }
