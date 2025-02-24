@@ -280,7 +280,7 @@ function App() {
   const addMacro = (newMacro) => {
     setMacros((prevMacros) => {
       const updatedMacros = [...prevMacros, newMacro];
-      saveMacros(updatedMacros); // Save the updated macros
+      //saveMacros(updatedMacros); // Save the updated macros
       console.log(updatedMacros);
       return updatedMacros;
     });
@@ -289,7 +289,7 @@ function App() {
   const deleteMacro = (index) => {
     setMacros((prevMacros) => {
       const updatedMacros = prevMacros.filter((_, i) => i !== index);
-      saveMacros(updatedMacros); // Save the updated macros
+      //saveMacros(updatedMacros); // Save the updated macros
       return updatedMacros;
     });
   }
@@ -298,7 +298,7 @@ function App() {
     setMacros((prevMacros) => {
       const updatedMacros = [...prevMacros];
       updatedMacros[index] = updatedMacro;
-      saveMacros(updatedMacros); // Save the updated macros
+      //saveMacros(updatedMacros); // Save the updated macros
       return updatedMacros;
     });
   }
@@ -308,7 +308,7 @@ function App() {
       setIsEditing(!isEditing);
     }
     setMacros((prevMacros) => {
-      saveMacros(prevMacros); // Save the current macros
+      //saveMacros(prevMacros); // Save the current macros
       return prevMacros;
     });
   }
@@ -347,6 +347,13 @@ function App() {
       connectToOBS();
     }
   }, [obsPort, obsPassword]);
+
+  // Effect hook that runs whenever `macros` state changes
+  useEffect(() => {
+    if (macros.length > 0) {
+        saveMacros(macros); // Call save whenever the macros state changes
+    }
+  }, [macros]); // Dependency array ensures this runs only when `macros` changes
 
   const toastErrorMessage = (message) => {
     toast.error(message);

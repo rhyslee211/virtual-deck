@@ -21,6 +21,8 @@ function MacroButton({isEditing, color, text, icon , keys, command, position, in
 
     const [isDragging, setIsDragging] = React.useState(false);
     const buttonRef = React.useRef(null);
+    const deleteButtonRef = React.useRef(null);
+    const editButtonRef = React.useRef(null);
     
     const handleMouseDown = async (event) => {
         if(isEditing) {
@@ -112,8 +114,8 @@ function MacroButton({isEditing, color, text, icon , keys, command, position, in
             {icon !== "" && <div className={`overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full ${colord(color).isDark() ? "text-white" : "text-black"}`}>
                 {icon !== "" && <IconPickerItem value={icon} size={20} />}
             </div>}
-            {isEditing && <button onClick={handleEditButtonClick} className="absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-400 h-min w-min"><HiOutlineDotsCircleHorizontal  size={15} /></button>}
-            {isEditing && <button onClick={handleDeleteButtonClick} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400 h-min w-min"><TiDelete  size={15} /></button>}
+            {isEditing && <button ref={editButtonRef} onClick={handleEditButtonClick} className="absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-400 h-min w-min"><HiOutlineDotsCircleHorizontal  size={15} /></button>}
+            {isEditing && <button ref={deleteButtonRef} onClick={handleDeleteButtonClick} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400 h-min w-min"><TiDelete  size={15} /></button>}
         </button>
     );
 }
