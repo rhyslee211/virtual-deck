@@ -17,11 +17,12 @@ function MacroArea({macros, isEditing, setMacros, deleteMacro, openEditMacroForm
     const macroAreaRef = useRef(null);
 
     return (
-        <div className="h-full w-full bg-slate-700 relative overflow-auto scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700" ref={macroAreaRef}>
+        <div className="h-full w-full bg-slate-700 relative overflow-hidden scrollbar scrollbar-thumb-gray-500 hover:scrollbar-thumb-slate-500 scrollbar-track-gray-700" ref={macroAreaRef}>
             {macros.map((macro, index) => {
                 return <MacroButton key={index} 
                     index={index}
                     color={macro.color} 
+                    text={macro.text}
                     icon={macro.icon} 
                     keys={macro.keys} 
                     command={macro.command} 

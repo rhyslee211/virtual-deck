@@ -1,8 +1,9 @@
 import React from 'react';
 import { colord } from "colord";
 import { lighten, darken } from "polished";
+import { IconPickerItem } from 'react-icons-picker'
 
-function MacroButtonDisplay({ color, icon }) {
+function MacroButtonDisplay({ color, text , icon }) {
     const buttonRef = React.useRef(null);
 
     const getHoverColor = (color) => {
@@ -13,7 +14,7 @@ function MacroButtonDisplay({ color, icon }) {
 
     return (
         <button ref={buttonRef}
-            className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold ${colord(color).isDark() ? "text-white" : "text-black"}`}
+            className={`w-12 h-12 rounded-md text-sm text-slate-900 flex items-center justify-center font-semibold`}
             style={{
                 backgroundColor: color,
                 transition: "background-color 0.3s",
@@ -21,9 +22,12 @@ function MacroButtonDisplay({ color, icon }) {
             onMouseEnter={() => buttonRef.current.style.backgroundColor = hoverColor}
             onMouseLeave={() => buttonRef.current.style.backgroundColor = color}
         >
-            <div className="overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full">
-                {icon}
-            </div>
+            {icon === "" && <div className={`overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full ${colord(color).isDark() ? "text-white" : "text-black"}`}>
+                {text}
+            </div>}
+            {icon !== "" && <div className={`overflow-hidden text-ellipsis flex justify-center items-center line-clamp-2 h-full w-full ${colord(color).isDark() ? "text-white" : "text-black"}`}>
+                {icon !== "" && <IconPickerItem value={icon} size={20} />}
+            </div>}
         </button>
     );
 }
