@@ -45,7 +45,7 @@ TWITCH_CLIENT_ID={Your_Twitch_Client_ID}
 TWITCH_CLIENT_SECRET={Your_Twitch_Client_Secret}
 ```
 
-## Virtual Deck Guide
+## Virtual Deck Setup and Use Guide
 
 Once your Virtual Deck is installed you still need to connect Twitch and set up the OBS websocket in order to use their functions. 
 
