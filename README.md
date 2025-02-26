@@ -71,7 +71,7 @@ You can edit macros by clicking the Pencil icon on the left sidebar and then sel
 
 Window allows configuration and button activation. ✅
 
-Small pop up window that allows button activation, and can be hidden with macro. ✅
+Small pop up window that allows button activation, and can be hidden with macro.
 
 Ability to control server/application from phone.
 
